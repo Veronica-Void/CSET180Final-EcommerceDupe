@@ -23,7 +23,7 @@ def add():
 def hello():
     return render_template('index.html')
 
-@app.route('add_products', methods=['GET'])
+@app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
 
