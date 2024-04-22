@@ -9,10 +9,17 @@ body{
 }
 
 .logo{
-    width: 45px;
+    width: 75px;
 }
 
 .navBar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 10px;
+}
+
+.innerNavBar{
     display:flex;
     justify-content: space-between;
     align-items:center;
@@ -29,3 +36,4 @@ header li{
     padding-left: 8px;
     padding-right: 8px;
 }
+

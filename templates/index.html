@@ -13,23 +13,26 @@
 
     <header>
         <div class="navBar">
-            <div>
+            <div class="innerNavBar">
 
                 <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
 
                 <ul class="bar">
-                    <li><a href="/templates/index.html">Home Page</a></li>
-                    <li><a href="/">Shop</a></li> <!--this page will display all of the products-->
-                    <li><a href="">Sign Up</a></li> <!--this page is for sign up-->
-                    <li><a href="">Login</a></li>
+                    <li><a href="/">Home Page</a></li>
+                    <li><a href="/shop">Shop</a></li> <!--this page will display all of the products-->
+                    <li><a href="/register">Sign Up</a></li> <!--this page is for sign up-->
+                    <li><a href="/login">Login</a></li>
                 </ul>
 
             </div> 
         </div>
     </header>
     {% block body %}
-    <p>this is the body</p>
+    <p>this is the home page</p>
     {%endblock%}
+    <footer>
+
+    </footer>
 
 </body>
 </html>
