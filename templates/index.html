@@ -1,23 +1,35 @@
+<style>
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/base.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>QuickShop - Home Page</title>
 </head>
 <body>
-    <div>
-        <nav>
-            <p>This is the Nav bar</p>
-        </nav>
-        {% block body %}
-        <p>this is the body</p>
-        {%endblock%}
-        <footer>
-            <p>This is the footer</p>
-        </footer>
-    </div>
-    
+
+    <header>
+        <div class="navBar">
+            <div>
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/templates/index.html">Home Page</a></li>
+                    <li><a href="/">Shop</a></li> <!--this page will display all of the products-->
+                    <li><a href="">Sign Up</a></li> <!--this page is for sign up-->
+                    <li><a href="">Login</a></li>
+                </ul>
+
+            </div> 
+        </div>
+    </header>
+    {% block body %}
+    <p>this is the body</p>
+    {%endblock%}
+
 </body>
 </html>
