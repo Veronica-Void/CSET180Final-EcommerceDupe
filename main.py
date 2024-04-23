@@ -56,6 +56,33 @@ def add_products_post():
     conn.commit()
     return redirect('/add_products')
 
+@app.route('/update', methods=['POST'])
+def update_product():
+    PID = request.form['PID']
+    conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price WHERE PID = :PID'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'PID': PID})
+    conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
+    conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
+    conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
+    conn.commit()
+    return redirect('/add_products')
+
+@app.route('/delete', methods=['POST'])
+def delete_product():
+    PID = request.form['PID']
+    # Delete related records first
+    conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
+    # Now delete the product
+    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID'), {'PID': PID})
+    conn.commit()
+    return redirect('/add_products')
+
+
+
+
+
+
 
 
 

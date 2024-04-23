@@ -7,6 +7,8 @@
 <form action="/add_products" method="post">
   <label for="title">Title:</label><br>
   <input type="text" id="title" name="title"><br>
+  <label for="category">Category:</label><br>
+  <input type="text" id="Category" name="Category"><br>
   <label for="description">Description:</label><br>
   <input type="text" id="description" name="description"><br>
   <label for="warranty_period">Warranty Period:</label><br>
@@ -23,6 +25,36 @@
   <input type="text" id="size" name="size"><br>
   <input type="submit" value="Submit">
 </form> 
+
+<form action="/delete" method="post">
+  <label for="PID">PID:</label><br>
+  <input type="text" id="PID" name="PID"><br>
+  <input type="submit" value="Delete">
+</form>
+
+<form action="/update" method="post">
+  <label for="PID">PID:</label><br>
+  <input type="text" id="PID" name="PID"><br>
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title"><br>
+  <label for="category">Category:</label><br>
+  <input type="text" id="Category" name="Category"><br>
+  <label for="description">Description:</label><br>
+  <input type="text" id="description" name="description"><br>
+  <label for="warranty_period">Warranty Period:</label><br>
+  <input type="text" id="warranty_period" name="warranty_period"><br>
+  <label for="number_of_items">Number of Items:</label><br>
+  <input type="text" id="number_of_items" name="number_of_items"><br>
+  <label for="price">Price:</label><br>
+  <input type="text" id="price" name="price"><br>
+  <label for="imagesURL">Image URL:</label><br>
+  <input type="text" id="imagesURL" name="imagesURL"><br>
+  <label for="color">Color:</label><br>
+  <input type="text" id="color" name="color"><br>
+  <label for="size">Size:</label><br>
+  <input type="text" id="size" name="size"><br>
+  <input type="submit" value="Update">
+
 
 </body>
 </html>
