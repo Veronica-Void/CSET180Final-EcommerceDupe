@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
 <body>
 
 <h2>Add Product</h2>
@@ -57,7 +58,44 @@
   <label for="size">Size:</label><br>
   <input type="text" id="size" name="size"><br>
   <input type="submit" value="Update">
-
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    form {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="submit"] {
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    .error {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
 </body>
 </html>
