@@ -4,7 +4,7 @@ import hashlib
 
 c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
-conn = engine.connect
+conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
