@@ -1,0 +1,39 @@
+body{
+    margin: auto;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    font-size: xx-large;
+    background-color: rgba(195, 227, 186, 0.756);
+    align-items: start;
+    min-height: 200vh;
+}
+
+.logo{
+    width: 75px;
+}
+
+.navBar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 10px;
+}
+
+.innerNavBar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 10px;
+}
+
+.bar{
+    display: inline-block;
+}
+
+header li{
+    float: left;
+    display: block;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
