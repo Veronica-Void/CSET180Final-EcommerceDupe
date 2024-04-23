@@ -35,7 +35,7 @@ def registerUser():
     # hashing the password value
     hashed_password = hash_password(password).hexdigest()
     # inserting values including hashed password into the database
-    conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\'), ""'))
+    conn.execute(text(f'INSERT INTO USER VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\'), ""'))
     conn.commit #extra layer of protection
     return redirect(url_for('showLogin'))
 # ------------------------------------------------ End of Register ------------------------------------------------------------
