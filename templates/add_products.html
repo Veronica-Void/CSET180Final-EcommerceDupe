@@ -3,12 +3,11 @@
 <body>
 
 <h2>Add Product</h2>
-
 <form action="/add_products" method="post">
   <label for="title">Title:</label><br>
   <input type="text" id="title" name="title"><br>
   <label for="category">Category:</label><br>
-  <input type="text" id="Category" name="Category"><br>
+  <input type="text" id="category" name="category"><br>
   <label for="description">Description:</label><br>
   <input type="text" id="description" name="description"><br>
   <label for="warranty_period">Warranty Period:</label><br>
@@ -26,19 +25,23 @@
   <input type="submit" value="Submit">
 </form> 
 
+
+<h2>Delete Product</h2>
 <form action="/delete" method="post">
   <label for="PID">PID:</label><br>
   <input type="text" id="PID" name="PID"><br>
   <input type="submit" value="Delete">
 </form>
 
+
+<h2>Update Product</h2>
 <form action="/update" method="post">
   <label for="PID">PID:</label><br>
   <input type="text" id="PID" name="PID"><br>
   <label for="title">Title:</label><br>
   <input type="text" id="title" name="title"><br>
-  <label for="category">Category:</label><br>
-  <input type="text" id="Category" name="Category"><br>
+  <label for="Category">Category:</label><br>
+  <input type="text" id="category" name="category"><br>
   <label for="description">Description:</label><br>
   <input type="text" id="description" name="description"><br>
   <label for="warranty_period">Warranty Period:</label><br>
