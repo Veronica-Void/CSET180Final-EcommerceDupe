@@ -5,16 +5,27 @@ from flask import Flask, render_template, request, redirect, session, url_for #i
 from sqlalchemy import create_engine, text
 import hashlib
 
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
 
-app.route('/')
+@app.route('/')
 def home():
     return render_template('index.html')
+
+
+def product():
+    products = product.query.all()
+    return render_template('product.html', products=products)
+
+
+@app.route('/product/<pid>')
+def product_detail(pid):
+    product = product.query.filter_by(PID=pid).first()
+    return render_template('product_detail.html', product=product)
 
 
 if __name__ == '__main__':
