@@ -53,7 +53,7 @@ def loginUser():
     matchInput_username = request.form.get('USER_NAME')
     matchInput_password = request.form.get('PASSWORD')
     hashedMatchInput_password = hash_password(matchInput_password).hexdigest()
-    check_match_exists = conn.execute(text(f'SELECT * FROM USER WHERE `PASSWORD` = \'{matchInput_username}\''))
+    check_match_exists = conn.execute(text(f'SELECT * FROM USER WHERE PASSWORD = \'{matchInput_username}\''))
     if len(check_match_exists) < 1:
         session['attemptError'] = "This user does not exist, please try again."
         return redirect(url_for('showLogin'))
