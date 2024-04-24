@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/admin_add_products">Admin</a></li>
+          <li><a href="/add_products">Vendor</a></li>
+          <li><a href="/all_accounts">Accounts</a></li>
+          
+        </ul>
+        <button>
+          <a href="/login" class="btn">Logout</a>
+        </button> 
+      </nav>
+   
+
+<h1>Hello these are all the accounts in the system!</h1>
+<h1>Accounts</h1>
+
+    <form method="POST" action="/all_accounts">
+        <label for="acc_type">Account Type:</label>
+        <select id="acc_type" name="acc_type">
+            <option value="all">All</option>
+            <option value="Vendor">Vendor</option>
+            <option value="Customer">Customer</option>
+        </select>
+        <input type="submit" value="Filter">
+    </form>
+
+    <table>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Account Type</th>
+            <th>Username</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.EMAIL }}</td>
+            <td>{{ user.NAME }}</td>
+            <td>{{ user.ACCOUNT_TYPE }}</td>
+            <td>{{ user.USER_NAME }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    text-align: left;
+    padding: 16px;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+form {
+    margin-bottom: 20px;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+    
+</body>
+</html>

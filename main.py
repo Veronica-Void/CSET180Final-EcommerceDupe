@@ -107,6 +107,25 @@ def admin_add_products_post():
     return redirect('/admin_add_products')
 
 
+@app.route('/all_accounts', methods=['GET'])
+def all_accounts():
+    return render_template('all_accounts.html')
+
+
+@app.route('/all_accounts', methods=['POST'])
+def search_account():
+    acc_type = request.form.get('acc_type')
+    if acc_type == 'all':
+        users = conn.execute(text('SELECT * FROM USER')).fetchall()
+    else:
+        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+    conn.commit()
+    print(users)
+    return render_template('all_accounts.html', users=users)
+
+
+
+
 
 @app.route('/admin_update', methods=['POST'])
 def admin_update_product():
