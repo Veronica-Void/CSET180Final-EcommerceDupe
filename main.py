@@ -6,12 +6,18 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
+
 conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
+
+# I honestly don't know what this is, my team member showed it to me but im still confused :) is this starting the session? yo no se shawty.
+# with app.app_context():
+#     Session = sessionmaker(bind=engine) 
+#     session = Session()
 
 
 # displays the home page
@@ -44,6 +50,7 @@ def registerUser():
     # inserting values including hashed password into the database
     conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\', "customer")'))
     conn.commit() #extra layer of protection
+    # NEED TO MAKE A CHECK FOR IF THE USER ALREADY EXISTS AND DISPLAY ERROR MESSAGE 
     return redirect(url_for('showLogin'))
 # ------------------------------------------------ End of Register ------------------------------------------------------------
 
@@ -55,54 +62,51 @@ def registerUser():
 # function uses session to display errors when there is a bad login attempt
 def showLogin():
     if 'attemptError' in session:
-        var = session.pop('attemptError')
+        errorMessage = session.pop('attemptError')
+    if 'attemptSuccess' in session:
+        successMessage = session.pop('attemptSuccess')
     else:
-        # setting an empty variable because a null value can't be passed here
-        var = ""
+        # setting empty variables because a nulls value can't be passed here
+        errorMessage = ""
+        successMessage = ""
     return render_template('/login.html')
+
 
 @app.route('/login', methods=['POST'])
 # taking values from Session and using them as a comparison to allow access
 def loginUser():
-    with app.app_context():
-        Session = sessionmaker(bind=engine)
-        session = Session()
+
 
     matchInput_username = request.form.get('USER_NAME')
     matchInput_password = request.form.get('PASSWORD')
+    # acc_type = conn.execute(text(f'SELECT ACCOUNT_TYPE FROM USER')).all()
+
     hashedMatchInput_password = hash_password(matchInput_password).hexdigest()
-    check_match_exists = conn.execute(text(f'SELECT * FROM USER WHERE USER_NAME = \'{matchInput_username}\'')).all()
-    acc_type = conn.execute(text('SELECT ACCOUNT_TYPE FROM USER'))
+    check_match_exists = conn.execute(text(f'SELECT USER_NAME, PASSWORD FROM USER WHERE USER_NAME = \'{matchInput_username}\'')).all()
+
+    # checking if user exists
     if len(check_match_exists) < 1:
         session['attemptError'] = "This user does not exist, please try again."
         return redirect(url_for('showLogin'))
-    if acc_type == 'Administrator':
+    # gives successful login message
+    elif len(check_match_exists) == 1:
+        session['attemptSuccess'] = "Login Success!"
+        return redirect(url_for('showUser_Account'))
+    
+    # checking if login = Admin by username & password
+    elif matchInput_username == 'smithJ_2024' and matchInput_password == 'Admin11':
         return redirect(url_for('showAdmin'))
-    if hashedMatchInput_password == check_match_exists[0][3]:
-        return redirect(url_for('showAccount'))
+    # checking if username and hashed password match the database
+    elif hashedMatchInput_password == check_match_exists[0][3] and matchInput_username == check_match_exists[0][0]:
+        return redirect(url_for('showUser_Account'))
     
+    # takes customer to their specific account 
+    # elif acc_type == 'customer':
+    #     return redirect(url_for('showUser_Account'))
     
-
-    # Kishaun's example of login function
-        #     if user.acc_type == 'Admin':
-        #         admin = session.execute(text('SELECT * FROM admins WHERE email = :email'),
-        #                                 {'email': user.email}).fetchone()
-        #         flask_session['user_id'] = admin.AdminID  # Store the admins id in the session
-        #         return render_template('admin.html')
-        #     elif user.acc_type == 'Customer':
-        #         customer = session.execute(text('SELECT * FROM customers WHERE email = :email'),
-        #                                    {'email': user.email}).fetchone()
-        #         flask_session['user_id'] = customer.CustomerID  # Store the student's ID in the session
-        #         flask_session['customer_id'] = customer.CustomerID  # Store the student's ID in the session
-
-        #         # Fetch the AccountNumber for the logged-in customer
-        #         account_number = get_logged_in_account_number()
-        #         flask_session['account_number'] = account_number  # Store the AccountNumber in the session
-
-        #         return render_template('homepage.html')
-        # else:
-        #     invalid = "Invalid email or password"
-        #     return render_template('login.html', invalid=invalid)
+    # if user account not created at all then it will just take them to where they can buy items
+    else:
+        return redirect(url_for('display_products'))
 
 # ------------------------------------------------ End of Login ----------------------------------------------------------------
 
@@ -112,25 +116,32 @@ def loginUser():
 
 
 
-# ------------------------------------------------ Start of Account ------------------------------------------------------------
+# ------------------------------------------------ Start of Accounts ------------------------------------------------------------
 
 # this is temporary, Jaiden you can delete whatever you need I'm just doing this to see the page and make sure the login function works
 @app.route('/accounts')
-def showAccount():
-    return render_template('my_account.html')
+def showUser_Account():
+    return render_template('/my_account.html')
+
+# ------------------------------------------------ End of Accounts --------------------------------------------------------------
 
 
 
-# ------------------------------------------------ End of Account --------------------------------------------------------------
+# ------------------------------------------------ Start of Admin ------------------------------------------------------------
 
+# temporary view of admin
+@app.route('/admin')
+def showAdmin():
+    return render_template('/admin.html')
 
-
-
+# ------------------------------------------------ End of Admin --------------------------------------------------------------
 
 
 
 
 # ------------------------------------------------ Start of Product ------------------------------------------------------------
+
+# keep or delete? 
 # def product():
 #     products = product.query.all()
 #     return render_template('product.html', products=products)
