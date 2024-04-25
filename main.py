@@ -50,7 +50,9 @@ def registerUser():
     # inserting values including hashed password into the database
     conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\', "customer")'))
     conn.commit() #extra layer of protection
+
     # NEED TO MAKE A CHECK FOR IF THE USER ALREADY EXISTS AND DISPLAY ERROR MESSAGE 
+
     return redirect(url_for('showLogin'))
 # ------------------------------------------------ End of Register ------------------------------------------------------------
 
