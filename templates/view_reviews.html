@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View reviews</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/admin_add_products">Admin</a></li>
+            <li><a href="/add_products">Vendor</a></li>
+            <li><a href="/all_accounts">Accounts</a></li>
+            <li><a href="/review">create review</a></li>
+
+        </ul>
+        <button>
+            <a href="/login" class="btn">Logout</a>
+        </button> 
+    </nav>
+    <h2>View Reviews</h2>
+    <form method="POST" action="/view_reviews">
+        <label for="Product">Product ID:</label>
+        <input type="text" id="Product" name="Product">
+        <input type="submit" value="Filter">
+    </form>
+    <table>
+        <tr>
+            <th>Product ID</th>
+            <th>Username</th>
+            <th>Rating</th>
+            <th>Description</th>
+            <th>Image</th>
+        </tr>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ review.PRODUCT }}</td>
+            <td>{{ review.REVIEW_USER_NAME }}</td>
+            <td>{{ review.RATING }}</td>
+            <td>{{ review.DESC }}</td>
+            <td><img src="{{ review.IMG}}" alt="Product Image"></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 16px;
+    }
+    
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    
+    input[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
+    
+    form {
+        margin-bottom: 20px;
+    }
+    </style>
+    
+</body>
+</html>

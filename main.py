@@ -23,6 +23,8 @@ def add():
 def hello():
     return render_template('index.html')
 
+
+## Start of Vendor functions
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -78,6 +80,8 @@ def delete_product():
     conn.commit()
     return redirect('/add_products')
 
+## End of Vendor functions
+
 @app.route('/product_page', methods=['GET'])
 def view_products():
     pass
@@ -86,6 +90,8 @@ def view_products():
 def view_products_post():   
     pass
 
+
+## Start of admin functions
 @app.route('/admin_add_products', methods=['GET'])
 def admin_add_products():
     return render_template('admin_add_products.html')
@@ -124,9 +130,6 @@ def search_account():
     return render_template('all_accounts.html', users=users)
 
 
-
-
-
 @app.route('/admin_update', methods=['POST'])
 def admin_update_product():
     created_by = request.form['vendor_username']
@@ -150,9 +153,66 @@ def admin_delete_product():
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID AND ADDED_BY_USERNAME = :username'), {'PID': PID, 'username': created_by})
     conn.commit()
     return redirect('/admin_add_products')
+## End of admin functions
 
 
 
+
+
+
+## Start of review section
+@app.route('/review',methods=['GET'])
+def review_get():
+    return render_template('review.html')
+
+
+@app.route('/review',methods=['POST'])
+def review_post():
+    username = request.form['username']
+    rating = request.form['rating']
+    desc = request.form['desc']
+    img = request.form['img']
+    Product = request.form['Product']
+    conn.execute(text('INSERT INTO REVIEW (RATING, `DESC`, IMG, REVIEW_USER_NAME,Product) VALUES (:rating, :desc, :img, :username, :Product)'), {'rating': rating, 'desc': desc, 'img': img, 'username': username, 'Product': Product})
+    conn.commit()
+    return redirect('/review')
+
+
+@app.route('/view_reviews', methods=['GET'])
+def view_reviews():
+    return render_template('view_reviews.html')
+
+
+@app.route('/view_reviews', methods=['POST'])
+def view_reviews_post():
+    Product = request.form['Product']
+    reviews = conn.execute(text('SELECT * FROM REVIEW WHERE Product = :Product'), {'Product': Product}).fetchall()
+    conn.commit()
+    return render_template('view_reviews.html', reviews=reviews)
+## End of review section
+
+
+    
+
+
+    
+
+
+    # user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
+    # if not user_exists:
+    #     conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
+
+# CREATE TABLE REVIEW (
+# RID INT AUTO_INCREMENT PRIMARY KEY,
+# RATING FLOAT,
+# `DESC` VARCHAR(50),
+# IMG VARCHAR(50),
+# `DATE` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# REVIEW_USER_NAME VARCHAR(50),
+# FOREIGN KEY (REVIEW_USER_NAME) REFERENCES `USER` (USER_NAME)
+# );
+  
+# 
 
 
 
@@ -274,3 +334,59 @@ if __name__ == '__main__':
 #                     {'question_id': question_id, 'option_value': option})
 #                 conn.commit()
 #         return render_template('create_test.html')
+
+
+
+
+# @app.route('/login', methods=['GET'])
+# def login():
+#     return render_template('login.html')
+
+# @app.route('/login', methods=['POST'])
+# def login_post():
+#     with app.app_context():
+#         engine = create_engine(connect)
+#         Session = sessionmaker(bind=engine)
+#         session = Session()
+#         conn = engine.connect()
+
+#         user = session.execute(text('SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :username AND PASSWORD = :password'),
+#                                request.form).fetchone()
+#         session.commit()
+#         conn.commit()
+
+#         if user:
+#             if user.ACCOUNT_TYPE == 'Administrator':
+#                 admin = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                                         {'username': user.USER_NAME}).fetchone()
+#                 flask_session['user_id'] = user.USER_NAME  # Store the admins id in the session
+#                 return render_template('admin.html')
+#             elif user.ACCOUNT_TYPE == 'Customer':
+#                 customer = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                                            {'username': user.USER_NAME}).fetchone()
+#                 flask_session['user_id'] = user.USER_NAME  # Store the student's ID in the session
+#                 # flask_session['customer_id'] = customer.CustomerID  # Store the student's ID in the session
+
+#                 return render_template('customer.html')
+#             elif user.ACCOUNT_TYPE == 'Vendor':
+#                 vendor = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                                          {'username': user.USER_NAME}).fetchone()
+#                 flask_session['user_id'] = user.USER_NAME
+#                 return render_template('vendor.html')
+        
+#         else:
+#             invalid = "Invalid email or password"
+#             return render_template('login.html', invalid=invalid)
+        
+
+
+# @app.route('/register', methods=['GET'])
+# def register():
+#     return render_template('register.html')
+
+
+# @app.route('/register', methods=['POST'])
+# def create_user():
+#     conn.execute(text('INSERT into user(user_name,`name`,email,`password`,Account_type)',request.form))
+#     conn.commit()
+#     return render_template('Customer_create.html')

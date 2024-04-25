@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/admin_add_products">Admin</a></li>
+            <li><a href="/add_products">Vendor</a></li>
+            <li><a href="/all_accounts">Accounts</a></li>
+            <li><a href="/review">create review</a></li>
+            <li><a href="/view_reviews">View Reviews</a></li>
+            
+        </ul>
+        <button>
+            <a href="/login" class="btn">Logout</a>
+        </button> 
+    </nav>
+    <h2>Review</h2>
+    <form action="/review" method="post">
+        <label for="Product">Product ID:</label><br>
+        <input type="text" id="Product" name="Product"><br>
+        <label for = "username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for = "rating">rating</label><br>
+        <input type="text" id="rating" name="rating"><br>
+        <label for="desc">Description</label>
+        <input type="text" id="desc" name="desc"><br>
+        <label for="imag">Image</label>
+        <input type="text" id="img" name="img"><br>
+        <input type="submit" value="Add Review">
+    </form>
+    <table>
+    </table>
+    
+</body>
+</html>
