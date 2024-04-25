@@ -23,7 +23,10 @@
     <form method="POST" action="/view_reviews">
         <label for="Product">Product ID:</label>
         <input type="text" id="Product" name="Product">
-        <input type="submit" value="Filter">
+        <label for="Rating">Rating:</label>
+        <input type="text" id="Rating" name="Rating">
+        <input type="submit" value="Search for Review">
+        <input type="submit" value="View All Reviews">
     </form>
     <table>
         <tr>
@@ -31,6 +34,7 @@
             <th>Username</th>
             <th>Rating</th>
             <th>Description</th>
+            <th>DATE</th>
             <th>Image</th>
         </tr>
         {% for review in reviews %}
@@ -39,6 +43,7 @@
             <td>{{ review.REVIEW_USER_NAME }}</td>
             <td>{{ review.RATING }}</td>
             <td>{{ review.DESC }}</td>
+            <td>{{ review.DATE }}</td>
             <td><img src="{{ review.IMG}}" alt="Product Image"></td>
         </tr>
         {% endfor %}

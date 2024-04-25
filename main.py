@@ -185,8 +185,16 @@ def view_reviews():
 
 @app.route('/view_reviews', methods=['POST'])
 def view_reviews_post():
-    Product = request.form['Product']
-    reviews = conn.execute(text('SELECT * FROM REVIEW WHERE Product = :Product'), {'Product': Product}).fetchall()
+    Product = request.form.get('Product')
+    Rating = request.form.get('Rating')
+    if Product and Rating:
+        reviews = conn.execute(text('SELECT * FROM REVIEW WHERE Product = :Product AND RATING = :Rating'), {'Product': Product, 'Rating': Rating}).fetchall()
+    elif Product:
+        reviews = conn.execute(text('SELECT * FROM REVIEW WHERE Product = :Product'), {'Product': Product}).fetchall()
+    elif Rating:
+        reviews = conn.execute(text('SELECT * FROM REVIEW WHERE RATING = :Rating'), {'Rating': Rating}).fetchall()
+    else:
+        reviews = conn.execute(text('SELECT * FROM REVIEW')).fetchall()
     conn.commit()
     return render_template('view_reviews.html', reviews=reviews)
 ## End of review section
