@@ -55,9 +55,7 @@ def registerUser():
     # if account type != 'admin' or account type != 'vendor', alter table to change account type to 'customer'
     # if account type != 'customer' or account type != 'admin', alter table to change account type to 'vendor'
 
-
-
-
+    # NEED TO MAKE A CHECK FOR IF THE USER ALREADY EXISTS AND DISPLAY ERROR MESSAGE 
 
     return redirect(url_for('showLogin'))
 # ------------------------------------------------ End of Register ------------------------------------------------------------
