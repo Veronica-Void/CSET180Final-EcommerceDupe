@@ -71,7 +71,6 @@ def loginUser():
 
 
 
-
 def product():
     products = product.query.all()
     return render_template('product.html', products=products)
