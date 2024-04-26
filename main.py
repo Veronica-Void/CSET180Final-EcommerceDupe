@@ -3,18 +3,19 @@
 
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
-from flask import Flask, render_template, request, redirect, session, url_for, flash, get_flashed_messages, flask_session #imported flask and other things here
+from flask import Flask, render_template, request, redirect, session, url_for, flash, get_flashed_messages #imported flask and other things here
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
+
 
 
 
@@ -67,16 +68,14 @@ def registerUser():
 @app.route('/login', methods=['GET'])
 # function uses session to display errors when there is a bad login attempt
 def showLogin():
+    errorMessage = ""
+    successMessage = ""
     if 'attemptError' in session:
         errorMessage = session.pop('attemptError')
 
     if 'attemptSuccess' in session:
         successMessage = session.pop('attemptSuccess')
 
-    else:
-        # setting empty variables because a nulls value can't be passed here
-        errorMessage = ""
-        successMessage = ""
     return render_template('/login.html', attemptError=errorMessage, attemptSuccess=successMessage)
 
 
@@ -84,10 +83,13 @@ def showLogin():
 @app.route('/login', methods=['POST'])
 # taking values from Session and using them as a comparison to allow access
 def loginUser():
+    conn = "mysql://root:cyber241@localhost/ecomm"
     # starts the session (?)
     with app.app_context():
         engine = create_engine(conn)
-        session = sessionmaker(bind=engine) 
+        session = sessionmaker(bind=engine)
+        login_session = session()
+        conn = engine.connect() 
 
         # changed the name of the variable from the example in discord
         login_session = session()
@@ -100,7 +102,7 @@ def loginUser():
         hashInput_password = hash_password(Input_password).hexdigest()
 
         # using the username in the session to grab info from the database
-        matchInput_username = session.execute(text(f'SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :USER_NAME AND PASSWORD = \'{hashInput_password}\''), request.form).fetchone()
+        matchInput_username = login_session.execute(text(f'SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :USER_NAME AND PASSWORD = \'{hashInput_password}\''), request.form).fetchone()
         login_session.commit()
         conn.commit()
 
