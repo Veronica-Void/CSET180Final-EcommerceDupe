@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/admin_add_products">Admin</a></li>
+            <li><a href="/add_products">Vendor</a></li>
+            <li><a href="/all_accounts">Accounts</a></li>
+            <li><a href="/review">create review</a></li>
+            <li><a href="/view_reviews">View Reviews</a></li>
+            
+        </ul>
+        <button>
+            <a href="/login" class="btn">Logout</a>
+        </button> 
+    </nav>
+    <h2>Login</h2>
+    <form action="/login" method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br>
+        <input type="submit" value="Login">
+    </form>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        
+        nav {
+          background-color: #333;
+          color: #fff;
+          padding: 10px;
+          margin-bottom: 20px;
+        }
+        
+        nav ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: space-between;
+        }
+    </style>
+    
+</body>
+</html>

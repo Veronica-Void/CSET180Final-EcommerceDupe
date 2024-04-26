@@ -1,8 +1,7 @@
-from random import random, randint
 
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect
 from sqlalchemy import create_engine, text
-from sqlalchemy.dialects import mysql
+# from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import sessionmaker
 from flask import session as flask_session
 
@@ -43,8 +42,8 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
-    session['username'] = 'test_user'
-    created_by = session['username']
+    # session['user_id'] = 'test_user'
+    created_by = flask_session['user_id']
 
     # Ensure the user exists in the USERS table
     user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
@@ -57,6 +56,19 @@ def add_products_post():
     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
     return redirect('/add_products')
+
+
+# @app.route('/View_Your_products', methods=['GET'])
+# def view_Yours():
+#     return render_template('View_Your_products.html')
+
+
+# @app.route('/View_Your_products', methods=['POST'])
+# def view_prod():
+#     created_by = flask_session['user_id']
+#     products = conn.execute(text('SELECT * FROM PRODUCT WHERE ADDED_BY_USERNAME = :username'), {'username': created_by}).fetchall()
+#     conn.commit()
+#     return render_template('View_Your_products.html', products=products)
 
 @app.route('/update', methods=['POST'])
 def update_product():
@@ -72,11 +84,13 @@ def update_product():
 
 @app.route('/delete', methods=['POST'])
 def delete_product():
+    created_by = flask_session['user_id']
     PID = request.form['PID']
+    conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'PID': PID, 'created_by': created_by})
     conn.commit()
     return redirect('/add_products')
 
@@ -130,6 +144,14 @@ def search_account():
     return render_template('all_accounts.html', users=users)
 
 
+# @app.route('/admin_delete_accounts', methods=['POST, GET'])
+# def admin_delete_account():
+#     username = request.form['usernames']
+#     conn.execute(text('DELETE FROM USER WHERE USER_NAME = :usernames'), {'usernames': username})
+#     conn.commit()
+#     return redirect('/all_accounts')
+
+
 @app.route('/admin_update', methods=['POST'])
 def admin_update_product():
     created_by = request.form['vendor_username']
@@ -168,7 +190,7 @@ def review_get():
 
 @app.route('/review',methods=['POST'])
 def review_post():
-    username = request.form['username']
+    username = flask_session['user_id']
     rating = request.form['rating']
     desc = request.form['desc']
     img = request.form['img']
@@ -198,6 +220,79 @@ def view_reviews_post():
     conn.commit()
     return render_template('view_reviews.html', reviews=reviews)
 ## End of review section
+
+
+@app.route('/product_page', methods=['GET'])
+def product_page_get():
+    return render_template('product_page.html')
+
+
+@app.route('/product_page', methods=['POST'])
+def product_page_post():
+    pass
+
+##
+
+@app.route('/register', methods=['GET'])
+def register():
+    return render_template('register.html')
+
+
+# @app.route('/register', methods=['POST'])
+# def create_user():
+#     conn.execute(text('INSERT into user values(user_name,`name`,email,`password`,Account_type)',request.form))
+#     conn.commit()
+#     return render_template('Customer_create.html')
+
+@app.route('/register', methods=['POST'])
+def create_user():
+    conn.execute(text('INSERT INTO USER VALUES (:username, :Name, :Email, :Password, :Account_Type)'), request.form)
+    conn.commit()
+    return render_template('login.html')
+
+
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    with app.app_context():
+        engine = create_engine(connect)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        conn = engine.connect()
+
+        user = session.execute(text('SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :username AND PASSWORD = :password'),
+                               request.form).fetchone()
+        session.commit()
+        conn.commit()
+
+        if user:
+            if user.ACCOUNT_TYPE == 'Administrator':
+                admin = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Administrator"'),
+                        {'username': user.USER_NAME}).fetchone()
+                flask_session['user_id'] = admin.USER_NAME  # Store the admins id in the session
+                return render_template('admin_add_products.html')
+            elif user.ACCOUNT_TYPE == 'Customer':
+                customer = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Customer" '),
+                                           {'username': user.USER_NAME}).fetchone()
+                flask_session['user_id'] = customer.USER_NAME  # Store the student's ID in the session
+                # flask_session['customer_id'] = customer.CustomerID  # Store the student's ID in the session
+
+                return render_template('customer.html')
+            elif user.ACCOUNT_TYPE == 'Vendor':
+                vendor = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Vendor"'),
+                                         {'username': user.USER_NAME}).fetchone()
+                flask_session['user_id'] = vendor.USER_NAME
+                return render_template('add_products.html')
+        
+        else:
+            invalid = "Invalid email or password"
+            return render_template('login.html', invalid=invalid)
+        
+
+
 
 
     
@@ -365,27 +460,106 @@ if __name__ == '__main__':
 
 #         if user:
 #             if user.ACCOUNT_TYPE == 'Administrator':
-#                 admin = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                 admin = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and and ACCOUNT_TYPE = Administrator'),
 #                                         {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = user.USER_NAME  # Store the admins id in the session
+#                 flask_session['user_id'] = admin.USER_NAME  # Store the admins id in the session
 #                 return render_template('admin.html')
 #             elif user.ACCOUNT_TYPE == 'Customer':
-#                 customer = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                 customer = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = Customer '),
 #                                            {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = user.USER_NAME  # Store the student's ID in the session
+#                 flask_session['user_id'] = customer.USER_NAME  # Store the student's ID in the session
 #                 # flask_session['customer_id'] = customer.CustomerID  # Store the student's ID in the session
 
 #                 return render_template('customer.html')
 #             elif user.ACCOUNT_TYPE == 'Vendor':
-#                 vendor = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username'),
+#                 vendor = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = Vendor'),
 #                                          {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = user.USER_NAME
+#                 flask_session['user_id'] = vendor.USER_NAME
 #                 return render_template('vendor.html')
         
 #         else:
 #             invalid = "Invalid email or password"
 #             return render_template('login.html', invalid=invalid)
         
+
+# @app.route('/login', methods=['POST'])
+# # taking values from Session and using them as a comparison to allow access
+# def loginUser():
+#     # starts the session (?)
+#     with app.app_context():
+#         session = sessionmaker(bind=engine) 
+
+#         # changed the name of the variable from the example in discord
+#         login_session = session()
+
+#         # grabbing the password from the login form
+#         Input_password = request.form.get('PASSWORD')
+
+#         # hashing the password from the login form
+#         hashInput_password = hash_password(Input_password).hexdigest()
+
+#         # using the username in the session to grab info from the database
+#         matchInput_username = session.execute(text(f'SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :USER_NAME AND PASSWORD = \'{hashInput_password}\''), request.form).fetchone()
+#         login_session.commit()
+#         conn.commit()
+
+#         # checks if user is admin, then brings admin to their pages
+#         if matchInput_username.ACCOUNT_TYPE == 'administrator' or matchInput_username.ACCOUNT_TYPE == 'Administrator':
+#             admin = login_session.execute(text('SELECT * FROM USER WHERE USER_NAME = :USER_NAME'), {'USER_NAME': login_session.USER_NAME}).fetchone()
+
+#             # check to see if the user exists, if not display error message
+#             if len(matchInput_username) < 1:
+#                 flask_session['attemptError'] = 'This user does not exist, Please register the account and try again.'
+#                 return redirect(url_for('showLogin'))
+
+#             # displays message upon successful login 
+#             elif len(matchInput_username) == 1:
+#                 flask_session['attemptSuccess'] = 'Login Success!'
+#                 # storing the admin's user_name in the session
+#                 flask_session['user_data'] = login_session.USER_NAME 
+#                 return redirect(url_for('showAdmin'))
+        
+
+#         # checks if user is customer, then brings customer to their pages
+#         elif matchInput_username.ACCOUNT_TYPE == 'customer' or matchInput_username.ACCOUNT_TYPE == 'Customer':
+#             customer = login_session.execute(text('SELECT * FROM USER WHERE USER_NAME = :USER_NAME'), {'USER_NAME': login_session.USER_NAME}).fetchone()
+
+#             # check to see if the user exists, if not display error message
+#             if len(matchInput_username) < 1:
+#                 flask_session['attemptError'] = 'This user does not exist, Please register the account and try again.'
+#                 return redirect(url_for('showLogin'))
+            
+#             # displays message upon successful login 
+#             elif len(matchInput_username) == 1:
+#                 flask_session['attemptSuccess'] = 'Login Success!'
+#                 # storing the customer's user_name in the session
+#                 flask_session['user_data'] = login_session.USER_NAME
+#                 return redirect(url_for('showUser'))
+        
+        
+#         # checks if user is vendor and brings them to vendor pages
+#         elif matchInput_username.ACCOUNT_TYPE == 'vendor' or matchInput_username.ACCOUNT_TYPE == 'Vendor':
+#             vendor = login_session.execute(text('SELECT * FROM USER WHERE USER_NAME = :USER_NAME'), {'USER_NAME': login_session.USER_NAME}).fetchone()
+
+#             # check to see if the user exists, if not display error message
+#             if len(matchInput_username) < 1:
+#                 flask_session['attemptError'] = 'This user does not exist, Please register the account and try again.'
+#                 return redirect(url_for('showLogin'))
+            
+#             # displays message upon successful login 
+#             elif len(matchInput_username) == 1:
+#                 flask_session['attemptSuccess'] = 'Login Success!'
+#                 # stores the vendor's user_name in the session
+#                 flask_session['user_data'] = login_session.USER_NAME
+#                 return redirect(url_for('showVendor'))
+
+ 
+#         else:
+#             invalid = "This username or password is invalid, please try again."
+#             return render_template('/login.html', invalid
+
+
+
 
 
 # @app.route('/register', methods=['GET'])
