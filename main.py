@@ -1,21 +1,24 @@
 # i keep getting a yellow error whenever I uncomment this import - Vee
-# from flask_mysqldb import MySQL i# Gives flask extensions for MySQL making some work easier.
+# from flask_mysqldb import MySQL # Gives flask extensions for MySQL making some work easier.
 
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
+
 from flask import Flask, render_template, request, redirect, session, url_for #imported flask and other things here
 # from flask import session as session
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
+
 
 
 
@@ -37,7 +40,6 @@ def showRegister():
     return render_template('/register.html')
 
 # actual sign up function
-# add session here too? idk bruh
 @app.route('/register', methods=['POST'])
 def registerUser():
     # grabbing the values that the user puts into the sign up form
@@ -69,7 +71,8 @@ def registerUser():
 @app.route('/login', methods=['GET'])
 # function uses session to display errors when there is a bad login attempt
 def showLogin():
-    return render_template('/login.html')
+  return render_template('/login.html')
+
 
  
 
@@ -77,13 +80,13 @@ def showLogin():
 # actual login function 
 # taking values from Session and using them as a comparison to allow access
 def loginUser():
-
+  
     # was trying to store these values in session - Vee
     session['login_username'] = request.form.get('USER_NAME')
     session['login_email'] = request.form.get('EMAIL')
     session['login_password'] = request.form.get('PASSWORD')
 
-    # this is how I was grabbing values from the form to later compare them 
+    # this is how I was grabbing values from the form to later compare them -Vee
     login_username = request.form.get('USER_NAME')
     login_email = request.form.get('EMAIL')
     login_password = request.form.get('PASSWORD')
