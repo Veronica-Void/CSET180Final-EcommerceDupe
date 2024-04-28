@@ -38,12 +38,23 @@
         <h3 class="formHeader">You are now Viewing the Login Page! Please login below. </h3>
 
         <form action="/login" method="POST">
-            <input type="text" name="USER_NAME" placeholder="Enter Username" class="registerInput">
+            <input type="text" name="USER_NAME" name="EMAIL" placeholder="Enter Username or Email" class="registerInput">
             <input type="password" name="PASSWORD" placeholder="Enter Password" class="registerInput">
+            <label for="ACCOUNT_TYPE">Please choose your account type here:</label>
+            <Select name="ACCOUNT_TYPE" class="registerInput" required>
+                <option value="Administrator">Administrator</option>
+                <option value="Vendor">Vendor</option>
+                <option value="Customer">Customer</option>
+            </Select>
             <input type="submit" value="Login" class="btn_submit">
         </form>
 
-    </div> 
+    </div>
+    {% if invalid %}
+        <p>{{invalid}}</p>
+    {%endif%} 
     {%endblock%}
+
+    
 </body>
 </html>

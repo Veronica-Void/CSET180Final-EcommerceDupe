@@ -1,7 +1,9 @@
 
 {% extends "base.html" %}
+
 {% block body %}
 
+<p>You are now on the customer accounts page</p>
 <ul>
     <li>Username: {{ user_data[0] }} </li>
     <br>
@@ -11,4 +13,5 @@
         <li>Account Type: {{ user_data[2] }}</li>
     </ul>
 </ul>
+
 {% endblock %}
