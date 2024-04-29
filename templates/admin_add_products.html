@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../static/style.css">
+  <title>Title</title>
+</head>
+<body>
+<nav>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/admin_add_products">Admin</a></li>
+    <li><a href="/add_products">Vendor</a></li>
+    <li><a href="/all_accounts">Accounts</a></li>
+    <li><a href="/review">create review</a></li>
+    <li><a href="/view_reviews">View Reviews</a></li>
+    <li><a href="/register">Register</a></li>
+    <li><a href="/login">Login</a></li>
+    
+  </ul>
+  <button>
+    <a href="/login" class="btn">Logout</a>
+  </button> 
+</nav>
+<h2>Admin Add Product</h2>
+<form action="/admin_add_products" method="post">
+  <label for="vendor_username">Vendor Username:</label><br>
+  <input type="text" id="vendor_username" name="vendor_username"><br>
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title"><br>
+  <label for="category">Category:</label><br>
+  <input type="text" id="category" name="category"><br>
+  <label for="description">Description:</label><br>
+  <input type="text" id="description" name="description"><br>
+  <label for="warranty_period">Warranty Period:</label><br>
+  <input type="text" id="warranty_period" name="warranty_period"><br>
+  <label for="number_of_items">Number of Items:</label><br>
+  <input type="text" id="number_of_items" name="number_of_items"><br>
+  <label for="price">Price:</label><br>
+  <input type="text" id="price" name="price"><br>
+  <label for="imagesURL">Image URL:</label><br>
+  <input type="text" id="imagesURL" name="imagesURL"><br>
+  <label for="color">Color:</label><br>
+  <input type="text" id="color" name="color"><br>
+  <label for="size">Size:</label><br>
+  <input type="text" id="size" name="size"><br>
+  <input type="submit" value="Add Product">
+</form> 
+
+<table>
+  
+</table>
+
+<h2>Delete Product</h2>
+<form action="/admin_delete" method="post">
+  <label for="vendor_username">Vendor Username:</label><br>
+  <input type="text" id="vendor_username" name="vendor_username"><br>
+  <label for="PID">PID:</label><br>
+  <input type="text" id="PID" name="PID"><br>
+  <input type="submit" value="Delete">
+</form>
+
+<h2>Edit Product</h2>
+<form action="/admin_update" method="post">
+  <label for="vendor_username">Vendor Username:</label><br>
+  <input type="text" id="vendor_username" name="vendor_username"><br>
+  <label for="PID">PID:</label><br>
+  <input type="text" id="PID" name="PID"><br>
+  <label for="title">Title:</label><br>
+  <input type="text" id="title" name="title"><br>
+  <label for="Category">Category:</label><br>
+  <input type="text" id="category" name="category"><br>
+  <label for="description">Description:</label><br>
+  <input type="text" id="description" name="description"><br>
+  <label for="warranty_period">Warranty Period:</label><br>
+  <input type="text" id="warranty_period" name="warranty_period"><br>
+  <label for="number_of_items">Number of Items:</label><br>
+  <input type="text" id="number_of_items" name="number_of_items"><br>
+  <label for="price">Price:</label><br>
+  <input type="text" id="price" name="price"><br>
+  <label for="imagesURL">Image URL:</label><br>
+  <input type="text" id="imagesURL" name="imagesURL"><br>
+  <label for="color">Color:</label><br>
+  <input type="text" id="color" name="color"><br>
+  <label for="size">Size:</label><br>
+  <input type="text" id="size" name="size"><br>
+  <input type="submit" value="Update">
+</form>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
+  }
+  
+  nav {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px;
+  }
+  
+  nav ul li a:hover {
+    background-color: #555;
+  }
+  
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  form {
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  input[type="submit"] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+
+</body>
+</html>
