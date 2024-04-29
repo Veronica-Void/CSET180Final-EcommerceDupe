@@ -1,3 +1,31 @@
+
+<style>
+    .registerInput{
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+    }
+
+    .btn_submit{
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+    }
+    .btn_submit:hover{
+        background-color: cadetblue;
+    }
+
+    .formHeader{
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+
+    form{
+        padding-left: 25%;
+        padding-right: 25%;
+    }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,51 +34,23 @@
     <title>Login</title>
 </head>
 <body>
+  {% extends 'index.html'%}
+    {% block body %}
+    <div>
+        <h3 class="formHeader">You are now Viewing the Login Page! Please login below. </h3>
 
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/admin_add_products">Admin</a></li>
-            <li><a href="/add_products">Vendor</a></li>
-            <li><a href="/all_accounts">Accounts</a></li>
-            <li><a href="/review">create review</a></li>
-            <li><a href="/view_reviews">View Reviews</a></li>
-            
-        </ul>
-        <button>
-            <a href="/login" class="btn">Logout</a>
-        </button> 
-    </nav>
-    <h2>Login</h2>
-    <form action="/login" method="post">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username"><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br>
-        <input type="submit" value="Login">
-    </form>
-    <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f2f2f2;
-          padding: 20px;
-        }
-        
-        nav {
-          background-color: #333;
-          color: #fff;
-          padding: 10px;
-          margin-bottom: 20px;
-        }
-        
-        nav ul {
-          list-style-type: none;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: space-between;
-        }
-    </style>
+        <form action="/login" method="POST">
+            <input type="text" name="USER_NAME" placeholder="Enter Username" class="registerInput">
+            <input type="password" name="PASSWORD" placeholder="Enter Password" class="registerInput">
+            <input type="submit" value="Login" class="btn_submit">
+        </form>
+
+    </div>
+    {% if msg %}
+        <p>{{ msg }}</p>
+    {%endif%} 
+    {%endblock%}
+
     
 </body>
 </html>

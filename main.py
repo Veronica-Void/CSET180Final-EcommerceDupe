@@ -1,4 +1,5 @@
 
+
 from flask import Flask, render_template, request, redirect
 from sqlalchemy import create_engine, text
 # from sqlalchemy.dialects import mysql
@@ -9,18 +10,279 @@ app = Flask(__name__)
 app.secret_key = 'password123'
 connect = "mysql://root:Applepine13.!@localhost/ECOM"
 engine = create_engine(connect, echo=True)
+
+
+
+
+
+
+
+# i keep getting a yellow error whenever I uncomment this import - Vee
+# from flask_mysqldb import MySQL # Gives flask extensions for MySQL making some work easier.
+
+import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
+import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
+
+from flask import Flask, render_template, request, redirect, session, url_for, flash #imported flask and other things here
+# from flask import session as session
+
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+import hashlib
+
+c_str = "mysql://root:cyber241@localhost/ecomm"
+engine = create_engine(c_str, echo=True)
+
 conn = engine.connect()
 
 
 
-@app.route('/base')
-def add():
-    return render_template('base.html')
 
-
+# displays the home page
 @app.route('/')
-def hello():
-    return render_template('index.html')
+def home():
+    return render_template('/index.html')
+
+# ------------------------------------------------ Start of Register ------------------------------------------------------------
+
+# this function is used in registerUser to hash the password when it is entered by the user and add it to the db
+def hash_password(inputpw):
+    return hashlib.sha3_256(inputpw.encode())
+
+def Checkexist(user_name):
+     user_name = str(user_name)
+     account = conn.execute(text("SELECT USER_NAME FROM USER WHERE USER_NAME = :USER_NAME"), {'USER_NAME': user_name})
+     result = account.fetchone()
+     if result:
+         return True
+     else:
+        return False
+
+# displays the sign up page
+@app.route('/register', methods=['GET'])
+def showRegister():
+    return render_template('/register.html')
+
+# actual sign up function
+@app.route('/register', methods=['POST', 'GET'])
+def registerUser():
+    msg = ''
+    if request.method == 'POST':
+        user_name = request.form.get('USER_NAME')
+        name = request.form.get('NAME')
+        email = request.form.get('EMAIL')
+        password = request.form.get('PASSWORD')
+        acc_type = request.form.get('ACCOUNT_TYPE')
+        # hashing the password value
+        hashed_password = hash_password(password).hexdigest()
+
+        if Checkexist(user_name):
+            flash('This Account Already Exists!', 'error')
+            return redirect(url_for('showRegister'))
+        else:
+            conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\', \'{acc_type}\')'))
+            conn.commit() #extra layer of protection
+            session['loggedin'] = True
+            session['USER_NAME'] = user_name
+            session["NAME"] = f"{name}"  
+            return redirect(url_for('showLogin'))   
+
+# ------------------------------------------------ End of Register ------------------------------------------------------------
+
+
+# ------------------------------------------------ Start of Login ------------------------------------------------------------
+@app.route('/login', methods=['GET'])
+# function uses session to display errors when there is a bad login attempt
+def showLogin():
+  return render_template('/login.html')
+
+
+@app.route('/login', methods=['POST', 'GET'])
+# actual login function 
+
+def loginUser():
+    msg = ''
+    if request.method == 'POST' and 'USER_NAME' in request.form and 'PASSWORD' in request.form:
+        username = request.form.get('USER_NAME')
+        password = request.form.get('PASSWORD')
+
+        hashed_password = hash_password(password).hexdigest()
+
+        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :user_name AND PASSWORD = :hashed_password"), {'user_name': username, 'hashed_password': hashed_password})
+        user_data = account.fetchone()
+         
+        if user_data:
+            session['loggedin'] = True
+            session['USER_NAME'] = user_data[0]
+            session['NAME'] = f"{user_data[1]}"
+            if user_data[4] == 'Admininstrator':
+                return redirect(url_for('admin'))
+            else:
+                return redirect(url_for('home'))
+        else:
+            msg = 'Wrong username or password'
+
+    return render_template('login.html', msg=msg)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('USER_NAME', None)
+    session.pop('NAME', None)
+    return redirect(url_for('loginUser'))
+
+# ------------------------------------------------ End of Login ----------------------------------------------------------------
+
+
+
+# -- Start of Log out --
+
+
+
+
+
+
+
+
+# -- End of log out --
+
+
+
+
+# ------------------------------------------------ Start of User Accounts ------------------------------------------------------------
+
+@app.route('/my_account', methods=['GET'])
+def account_info():
+    username = str(session.get('USER_NAME'))
+    if username:
+        account = conn.execute(text("SELECT * FROM user WHERE USER_NAME = :USER_NAME"), {'USER_NAME': username})
+        user_data = account.fetchone()
+        if user_data:
+            return render_template("my_account.html", user_data=user_data)
+    return redirect(url_for('login'))
+
+# ------------------------------------------------ End of User Accounts --------------------------------------------------------------
+
+
+
+
+
+# ------------------------------------------------ Start of Admin ------------------------------------------------------------
+
+# temporary view of admin
+@app.route('/admin')
+def showAdmin():
+    return render_template('/admin.html')
+
+# ------------------------------------------------ End of Admin --------------------------------------------------------------
+
+
+
+
+# ------------------------------------------------ Start of Product ------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------ End of Product ------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Start of Vendor functions
@@ -29,16 +291,7 @@ def add_products():
     return render_template('add_products.html')
 
 
-# @app.route('/add_products', methods=['POST'])
-# def add_products_post():
-#     session['username'] = 'test_user'
-#     created_by = session['username']
-#     conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by})
-#     conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-#     conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-#     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
-#     conn.commit()
-#     return redirect('/add_products')
+
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
@@ -58,17 +311,7 @@ def add_products_post():
     return redirect('/add_products')
 
 
-# @app.route('/View_Your_products', methods=['GET'])
-# def view_Yours():
-#     return render_template('View_Your_products.html')
 
-
-# @app.route('/View_Your_products', methods=['POST'])
-# def view_prod():
-#     created_by = flask_session['user_id']
-#     products = conn.execute(text('SELECT * FROM PRODUCT WHERE ADDED_BY_USERNAME = :username'), {'username': created_by}).fetchall()
-#     conn.commit()
-#     return render_template('View_Your_products.html', products=products)
 
 @app.route('/update', methods=['POST'])
 def update_product():
@@ -143,13 +386,6 @@ def search_account():
     print(users)
     return render_template('all_accounts.html', users=users)
 
-
-# @app.route('/admin_delete_accounts', methods=['POST, GET'])
-# def admin_delete_account():
-#     username = request.form['usernames']
-#     conn.execute(text('DELETE FROM USER WHERE USER_NAME = :usernames'), {'usernames': username})
-#     conn.commit()
-#     return redirect('/all_accounts')
 
 
 @app.route('/admin_update', methods=['POST'])
@@ -238,11 +474,7 @@ def register():
     return render_template('register.html')
 
 
-# @app.route('/register', methods=['POST'])
-# def create_user():
-#     conn.execute(text('INSERT into user values(user_name,`name`,email,`password`,Account_type)',request.form))
-#     conn.commit()
-#     return render_template('Customer_create.html')
+
 
 @app.route('/register', methods=['POST'])
 def create_user():
@@ -298,64 +530,20 @@ def login_post():
     
 
 
+   
+
+
+
+
+
+
+
+
+
+
+
     
 
-
-    # user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
-    # if not user_exists:
-    #     conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
-
-# CREATE TABLE REVIEW (
-# RID INT AUTO_INCREMENT PRIMARY KEY,
-# RATING FLOAT,
-# `DESC` VARCHAR(50),
-# IMG VARCHAR(50),
-# `DATE` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# REVIEW_USER_NAME VARCHAR(50),
-# FOREIGN KEY (REVIEW_USER_NAME) REFERENCES `USER` (USER_NAME)
-# );
-  
-# 
-
-
-
-
-
-
-
-
-
-
-
-
-## Cart in progress
-# @app.route('/Cart', methods=['GET'])
-# def View_cart():
-#      return render_template('cart.html')
-
-
-
-# @app.route('/Cart', methods=['POST'])
-# def add_to_cart():
-#     session['username'] = 'Customer1'
-#     Customer = session['username']
-#     user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': Customer}).fetchone() is not None
-#     if not user_exists:
-#         conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': Customer, 'name': 'John'})
-##
-    
-
-
-# @app.route('/accounts', methods=['POST'])
-# def search_account():
-#     acc_type = request.form.get('acc_type')
-#     if acc_type == 'all':
-#         users = conn.execute(text('SELECT * FROM USERS')).fetchall()
-#     else:
-#         users = conn.execute(text('SELECT * FROM USERS WHERE acc_type = :acc_type'), {'acc_type': acc_type}).fetchall()
-#     conn.commit()
-#     print(users)
-#     return render_template('accounts.html', users=users)
     
 
 if __name__ == '__main__':

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.TITLE }}</title>
+</head>
+<body>
+    <h1>{{ product.TITLE }}</h1>
+    <p>{{ product.DESCRIPTION }}</p>
+    <p>Price: ${{ product.PRICE }}</p>
+    <p>Warranty Period: {{ product.WARRANTY_PERIOD }}</p>
+    <p>Number of Items: {{ product.NUMBER_OF_ITEMS }}</p>
+    <h2>Images</h2>
+    <div class="product-images">
+        {% for img in product.images %}
+            <img src="{{ img.IMAGE_URL }}" alt="Product Image">
+        {% endfor %}
+    </div>
+    <h2>Available Colors</h2>
+    <ul>
+        {% for color in product.colors %}
+            <li>{{ color.COLOR }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Available Sizes</h2>
+    <ul>
+        {% for size in product.sizes %}
+            <li>{{ size.SIZE }}</li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('add_to_cart') }}" method="post">
+        <input type="hidden" name="pid" value="{{ product.PID }}">
+        <label for="color">Select Color:</label>
+        <select name="color" id="color">
+            {% for color in product.colors %}
+                <option value="{{ color.COLOR }}">{{ color.COLOR }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="size">Select Size:</label>
+        <select name="size" id="size">
+            {% for size in product.sizes %}
+                <option value="{{ size.SIZE }}">{{ size.SIZE }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit">Add to Cart</button>
+    </form>
+</body>
+</html>

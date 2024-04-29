@@ -1,4 +1,73 @@
+<style>
+    .registerInput{
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+    }
+
+    .btn_submit{
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+    }
+    .btn_submit:hover{
+        background-color: cadetblue;
+    }
+
+    .formHeader{
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+
+    form{
+        padding-left: 25%;
+        padding-right: 25%;
+    }
+</style>
+
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    {% extends 'index.html'%}
+    {% block body %}
+    <div>
+        <h3 class="formHeader">You are now Viewing the Sign Up Page! Please Sign up below. </h3>
+        {% for message in get_flashed_messages(with_categories=false) %}
+            <div class="flash-message">
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            </div>
+        {% endfor %}
+        <form action="/register" method="POST">
+            
+            <input type="text" name="USER_NAME" placeholder="Enter your desired Username here" class="registerInput">
+            <input type="text" name="NAME" placeholder="Enter your name here (First and Last)" class="registerInput">
+            <input type="email" name="EMAIL" placeholder="Enter your Email here" class="registerInput">
+            <input type="password" name="PASSWORD" placeholder="Enter your Password here" class="registerInput">
+            <label for="ACCOUNT_TYPE">Please choose your account type here:</label>
+            <Select name="ACCOUNT_TYPE" class="registerInput" required>
+                <option value="Administrator">Administrator</option>
+                <option value="Vendor">Vendor</option>
+                <option value="Customer">Customer</option>
+            </Select>
+            <input type="submit" value="Submit" class="btn_submit">
+        </form>
+
+    </div> 
+    {%endblock%}
+
+</body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -80,7 +149,5 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
-</html>
-
-
+</html>  -->
 
