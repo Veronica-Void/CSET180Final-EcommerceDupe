@@ -43,6 +43,12 @@
             <input type="text" name="NAME" placeholder="Enter your name here (First and Last)" class="registerInput">
             <input type="email" name="EMAIL" placeholder="Enter your Email here" class="registerInput">
             <input type="password" name="PASSWORD" placeholder="Enter your Password here" class="registerInput">
+            <label for="ACCOUNT_TYPE">Please choose your account type here:</label>
+            <Select name="ACCOUNT_TYPE" class="registerInput" required>
+                <option value="Administrator">Administrator</option>
+                <option value="Vendor">Vendor</option>
+                <option value="Customer">Customer</option>
+            </Select>
             <input type="submit" value="Submit" class="btn_submit">
         </form>
 
