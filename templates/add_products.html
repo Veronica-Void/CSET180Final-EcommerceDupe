@@ -72,15 +72,7 @@
     <input type="text" id="size" name="size">
     <input type="submit" value="Update">
   </form>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+  
 
 
   
