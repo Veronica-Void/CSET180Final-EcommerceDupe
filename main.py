@@ -4,7 +4,7 @@
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
 
-from flask import Flask, render_template, request, redirect, session, url_for #imported flask and other things here
+from flask import Flask, render_template, request, redirect, session, url_for, flash #imported flask and other things here
 # from flask import session as session
 
 from sqlalchemy import create_engine, text
@@ -34,37 +34,45 @@ def home():
 def hash_password(inputpw):
     return hashlib.sha3_256(inputpw.encode())
 
+def Checkexist(user_name):
+     user_name = str(user_name)
+     account = conn.execute(text("SELECT USER_NAME FROM USER WHERE USER_NAME = :USER_NAME"), {'USER_NAME': user_name})
+     result = account.fetchone()
+     if result:
+         return True
+     else:
+        return False
+
 # displays the sign up page
 @app.route('/register', methods=['GET'])
 def showRegister():
     return render_template('/register.html')
 
 # actual sign up function
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['POST', 'GET'])
 def registerUser():
-    # grabbing the values that the user puts into the sign up form
-    user_name = request.form.get('USER_NAME')
-    name = request.form.get('NAME')
-    email = request.form.get('EMAIL')
-    password = request.form.get('PASSWORD')
-    acc_type = request.form.get('ACCOUNT_TYPE')
-    # hashing the password value
-    hashed_password = hash_password(password).hexdigest()
+    msg = ''
+    if request.method == 'POST':
+        user_name = request.form.get('USER_NAME')
+        name = request.form.get('NAME')
+        email = request.form.get('EMAIL')
+        password = request.form.get('PASSWORD')
+        acc_type = request.form.get('ACCOUNT_TYPE')
+        # hashing the password value
+        hashed_password = hash_password(password).hexdigest()
 
-    # inserting values including hashed password into the database
-    conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\', \'{acc_type}\')'))
-    conn.commit() #extra layer of protection
-
-    # I NEED TO MAKE A CHECK FOR IF THE USER ALREADY EXISTS AND DISPLAY ERROR MESSAGE 
-
-    return redirect(url_for('showLogin'))
-
-
-    
+        if Checkexist(user_name):
+            flash('This Account Already Exists!', 'error')
+            return redirect(url_for('showRegister'))
+        else:
+            conn.execute(text(f'INSERT INTO USER (USER_NAME, NAME, EMAIL, PASSWORD, ACCOUNT_TYPE) VALUES (\'{user_name}\', \'{name}\',\'{email}\',\'{hashed_password}\', \'{acc_type}\')'))
+            conn.commit() #extra layer of protection
+            session['loggedin'] = True
+            session['USER_NAME'] = user_name
+            session["NAME"] = f"{name}"  
+            return redirect(url_for('showLogin'))   
 
 # ------------------------------------------------ End of Register ------------------------------------------------------------
-
-
 
 
 # ------------------------------------------------ Start of Login ------------------------------------------------------------
@@ -74,31 +82,40 @@ def showLogin():
   return render_template('/login.html')
 
 
- 
-
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 # actual login function 
-# taking values from Session and using them as a comparison to allow access
+
 def loginUser():
-  
-    # was trying to store these values in session - Vee
-    session['login_username'] = request.form.get('USER_NAME')
-    session['login_email'] = request.form.get('EMAIL')
-    session['login_password'] = request.form.get('PASSWORD')
+    msg = ''
+    if request.method == 'POST' and 'USER_NAME' in request.form and 'PASSWORD' in request.form:
+        username = request.form.get('USER_NAME')
+        password = request.form.get('PASSWORD')
 
-    # this is how I was grabbing values from the form to later compare them -Vee
-    login_username = request.form.get('USER_NAME')
-    login_email = request.form.get('EMAIL')
-    login_password = request.form.get('PASSWORD')
-    hashed_login_password = hash_password(login_password).hexdigest() #this should probably stay because you need to match up the password from the login form with the password that's already in the db (from the sign up form)
+        hashed_password = hash_password(password).hexdigest()
+
+        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :user_name AND PASSWORD = :hashed_password"), {'user_name': username, 'hashed_password': hashed_password})
+        user_data = account.fetchone()
+         
+        if user_data:
+            session['loggedin'] = True
+            session['USER_NAME'] = user_data[0]
+            session['NAME'] = f"{user_data[1]}"
+            if user_data[4] == 'Admininstrator':
+                return redirect(url_for('admin'))
+            else:
+                return redirect(url_for('home'))
+        else:
+            msg = 'Wrong username or password'
+
+    return render_template('login.html', msg=msg)
 
 
-    # selects everything from the db using the username or email that comes from the login form
-    checkif_userExists = conn.execute(text(f'SELECT * FROM USER WHERE USER_NAME = \'{login_username}\' OR EMAIL = \'{login_email}\''))
-
-    return render_template('index.html') # just returning the home page because something needs to be returned from the function
-
-    
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('USER_NAME', None)
+    session.pop('NAME', None)
+    return redirect(url_for('loginUser'))
 
 # ------------------------------------------------ End of Login ----------------------------------------------------------------
 
