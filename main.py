@@ -137,11 +137,15 @@ def logout():
 
 # ------------------------------------------------ Start of User Accounts ------------------------------------------------------------
 
-# this is temporary, Jaiden you can delete whatever you need I'm just doing this to see the page and make sure the login function works
-@app.route('/accounts')
-def showUser():
-    user_data = 'ehehehehe'
-    return render_template('/my_account.html', user_data=user_data)
+@app.route('/my_account', methods=['GET'])
+def account_info():
+    username = str(session.get('USER_NAME'))
+    if username:
+        account = conn.execute(text("SELECT * FROM user WHERE USER_NAME = :USER_NAME"), {'USER_NAME': username})
+        user_data = account.fetchone()
+        if user_data:
+            return render_template("my_account.html", user_data=user_data)
+    return redirect(url_for('login'))
 
 # ------------------------------------------------ End of User Accounts --------------------------------------------------------------
 
