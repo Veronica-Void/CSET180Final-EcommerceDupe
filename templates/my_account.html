@@ -1,16 +1,16 @@
 
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% block body %}
 
-<p>You are now on the customer accounts page</p>
+<p>ACCOUNT INFO</p>
 <ul>
     <li>Username: {{ user_data[0] }} </li>
     <br>
     <ul>
         <li>Name: {{ user_data[1] }}</li>
-        <li>Email: {{ user_data[8] }}</li>
-        <li>Account Type: {{ user_data[2] }}</li>
+        <li>Email: {{ user_data[2] }}</li>
+        <li>Account Type: {{ user_data[4] }}</li>
     </ul>
 </ul>
 

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/admin_add_products">Admin</a></li>
+            <li><a href="/add_products">Vendor</a></li>
+            <li><a href="/all_accounts">Accounts</a></li>
+            <li><a href="/review">create review</a></li>
+            <li><a href="/view_reviews">View Reviews</a></li>
+            
+        </ul>
+        <button>
+            <a href="/login" class="btn">Logout</a>
+        </button> 
+    </nav>
+    <h2>Review</h2>
+    <form action="/review" method="post">
+        <label for="Product">Product ID:</label><br>
+        <input type="text" id="Product" name="Product"><br>
+        <!-- <label for = "username">Username:</label><br>
+        <input type="text" id="username" name="username"><br> -->
+        <label for = "rating">rating</label><br>
+        <input type="text" id="rating" name="rating"><br>
+        <label for="desc">Description</label>
+        <input type="text" id="desc" name="desc"><br>
+        <label for="imag">Image</label>
+        <input type="text" id="img" name="img"><br>
+        <input type="submit" value="Add Review">
+    </form>
+    <table>
+    </table>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        
+        nav {
+          background-color: #333;
+          color: #fff;
+          padding: 10px;
+          margin-bottom: 20px;
+        }
+        
+        nav ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: space-between;
+        }
+        
+        nav ul li {
+          display: inline;
+          margin-right: 10px;
+        }
+        
+        nav ul li a {
+          color: #fff;
+          text-decoration: none;
+          padding: 5px;
+        }
+        
+        nav ul li a:hover {
+          background-color: #555;
+        }
+        
+        h2 {
+          margin-top: 20px;
+          margin-bottom: 10px;
+        }
+        
+        form {
+          max-width: 400px;
+          margin-bottom: 20px;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+          width: 100%;
+          padding: 10px;
+          margin: 10px 0;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+        
+        input[type="submit"] {
+          width: 100%;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 10px 0;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        
+        input[type="submit"]:hover {
+          background-color: #45a049;
+        }
+        
+        .error {
+          color: red;
+          font-size: 14px;
+          margin-top: 5px;
+        }
+      </style>
+      
+    
+</body>
+</html>
