@@ -161,6 +161,95 @@ def showAdmin():
 # ------------------------------------------------ End of Product ------------------------------------------------------------
 
 
+
+
+
+
+
+
+# ------------------------------------------------ Start of checkout ------------------------------------------------------------
+# creating checkout functionality
+# while True:
+#     age = input("Enter your age to determine your stage of life: ")
+#     ageF = float(age)
+#     if ageF < 2:
+#         print("This is a baby.")
+#     elif ageF == 2 or ageF < 4:
+#         print("This is a Toddler.")
+#     elif ageF == 4 or ageF < 13:
+#         print("This is a kid.")
+#     elif ageF == 13 or ageF < 20:
+#         print("This is a teenager.")
+#     elif ageF == 20 or ageF < 65:
+#         print("This is an adult.")
+#     else:
+#         print("This person is an Elder")
+
+
+
+while True:
+    user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
+    user_inputF = float(user_input)
+    cart = []
+    if user_inputF == 1:
+        print('You have chosen to add items to your cart.')
+        add_item = input('Type the item you wish to add here: ')
+        cart.append(add_item)
+        print('Items in your cart:', cart)
+        add_more = input('Would you like to add another? Yes or No: ')
+
+        while True:
+
+            if add_more == 'Yes' or add_more == 'Y':
+                add_item = input('Type the item you wish to add here: ')
+                cart.append(add_item)
+                print('Items in your cart:', cart)
+                even_more = input('More?')
+                if even_more == 'y' or even_more == 'yes':
+                    add_item = input('Type the item you wish to add here: ')
+                    cart.append(add_item)
+                    print('Items in your cart:', cart)
+                elif even_more == 'n' or even_more == 'no':
+                    print('abdscsewferwfgs')
+
+            elif add_more == 'No' or add_more == 'N':
+                print('Okay, proceeding to the next step')
+            else:
+                print('Okay, proceeding to the next step.')
+                continue
+        
+    elif user_inputF == 2:
+        print('You have chosen to remove items from the cart.')
+        remove_item = input('Type the item you wish to remove here: ')
+
+    else:
+        print('Okay, proceeding to checkout.')
+        
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------ End of checkout ---------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
