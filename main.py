@@ -168,25 +168,8 @@ def showAdmin():
 
 
 # ------------------------------------------------ Start of checkout ------------------------------------------------------------
-# creating checkout functionality
-# while True:
-#     age = input("Enter your age to determine your stage of life: ")
-#     ageF = float(age)
-#     if ageF < 2:
-#         print("This is a baby.")
-#     elif ageF == 2 or ageF < 4:
-#         print("This is a Toddler.")
-#     elif ageF == 4 or ageF < 13:
-#         print("This is a kid.")
-#     elif ageF == 13 or ageF < 20:
-#         print("This is a teenager.")
-#     elif ageF == 20 or ageF < 65:
-#         print("This is an adult.")
-#     else:
-#         print("This person is an Elder")
 
-
-
+# just making sure this works in the terminal first
 while True:
     user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
     user_inputF = float(user_input)
@@ -225,17 +208,6 @@ while True:
     else:
         print('Okay, proceeding to checkout.')
         
-
-
-
-
-
-
-
-
-
-
-
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
