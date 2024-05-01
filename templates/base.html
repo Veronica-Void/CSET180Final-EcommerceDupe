@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/base.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickShop - Home Page</title>
+</head>
+<body>
+
+    <header>
+        <div class="navBar">
+            <div class="innerNavBar">
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/">Home Page</a></li>
+                    <li><a href="/my_account">My Account</a></li>
+                    <li><a href="/shop">Shop</a></li> <!--this page will display all of the products-->
+                    <li><a href="/register">Sign Up</a></li> <!--this page is for sign up-->
+                    <li><a href="/login">Login</a></li>
+                </ul>
+                <button class="barItem input" style="margin-left:10px;">
+                    <a href="/logout" class="btn">Logout</a>
+                </button>
+            </div> 
+        </div>
+    </header>
+    
+    <div class="content">
+        {% block body %}
+        {% endblock %}
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo">
+                    <h3>TheShop</h3>
+                </div>
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TheShop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
