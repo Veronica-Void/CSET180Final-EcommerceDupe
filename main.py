@@ -136,7 +136,7 @@ def logout():
 
 
 
-# -- Start of Log out ----------------------------------------------------------------------------------------------------------
+# ------------------------------------------------ Start of Log out ------------------------------------------------------------
 
 
 
@@ -145,7 +145,7 @@ def logout():
 
 
 
-# -- End of log out --
+# ------------------------------------------------ End of log out ---------------------------------------------------------------
 
 
 
@@ -193,20 +193,6 @@ def showAdmin():
 
 
 # ------------------------------------------------ Start of checkout ------------------------------------------------------------
-cart_items = {
-    'apple': 3,
-    'banana': 6,
-    'orange': 2
-}
-
-def calculate_price():
-    prices = {
-        'apple': 0.5,
-        'banana': 0.3,
-        'orange': 0.25
-    }
-
-    total_price = sum(prices[item] * quantity for item, quantity in cart_items)
 # just making sure this works in the terminal first
 @app.route('/checkout', methods=['GET'])
 def display_checkout():
