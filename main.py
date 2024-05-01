@@ -1,35 +1,18 @@
-
-
-from flask import Flask, render_template, request, redirect
-from sqlalchemy import create_engine, text
-# from sqlalchemy.dialects import mysql
-from sqlalchemy.orm import sessionmaker
-from flask import session as flask_session
-
-app = Flask(__name__)
-app.secret_key = 'hola'
-# engine = create_engine(connect, echo=True)
-
-
-# i keep getting a yellow error whenever I uncomment this import - Vee
-# from flask_mysqldb import MySQL # Gives flask extensions for MySQL making some work easier.
-
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
 
 from flask import Flask, render_template, request, redirect, session, url_for, flash #imported flask and other things here
-# from flask import session as session
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
-
+app = Flask(__name__)
+app.secret_key = 'hola'
 
 
 # displays the home page
@@ -123,7 +106,7 @@ def loginUser():
 
 
 
-# -- Start of Log out --
+# ------------------------------------------------ Start of Log out ------------------------------------------------------------
 
 @app.route('/logout')
 def logout():
@@ -133,7 +116,7 @@ def logout():
     return redirect(url_for('loginUser'))
 
 
-# -- End of log out --
+# ------------------------------------------------ End of log out ---------------------------------------------------------------
 
 
 
@@ -168,17 +151,8 @@ def showAdmin():
 
 
 
+
 # ------------------------------------------------ Start of Product ------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -190,7 +164,6 @@ def showAdmin():
 
 
 # ------------------------------------------------ Start of checkout ------------------------------------------------------------
-
 # just making sure this works in the terminal first
 @app.route('/checkout', methods=['GET'])
 def display_checkout():
@@ -230,21 +203,20 @@ def checkout_user():
                     print('Okay, proceeding to the next step.')
                     continue
 
+
         elif user_inputF == 2:
             print('You have chosen to remove items from the cart.')
             remove_item = input('Type the item you wish to remove here: ')
 
         else:
             print('Okay, proceeding to checkout.')
-        
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
 
 
 
-
-## Start of Vendor functions ----------------------------------------------------------> Kishaun
+# Start of Vendor functions ----------------------------------------------------------> Kishaun
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -375,8 +347,6 @@ def admin_delete_product():
 
 
 
-
-
 ## Start of review section --------------------------------------------------------------------> Kishaun
 @app.route('/review',methods=['GET'])
 def review_get():
@@ -420,3 +390,4 @@ def view_reviews_post():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
