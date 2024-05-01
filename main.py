@@ -30,8 +30,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
-engine = create_engine(c_str, echo=True)
+# c_str = "mysql://root:cyber241@localhost/ecomm"
+# engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
@@ -204,43 +204,43 @@ def showAdmin():
 # ------------------------------------------------ Start of checkout ------------------------------------------------------------
 
 # just making sure this works in the terminal first
-while True:
-    user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
-    user_inputF = float(user_input)
-    cart = []
-    if user_inputF == 1:
-        print('You have chosen to add items to your cart.')
-        add_item = input('Type the item you wish to add here: ')
-        cart.append(add_item)
-        print('Items in your cart:', cart)
-        add_more = input('Would you like to add another? Yes or No: ')
+# while True:
+#     user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
+#     user_inputF = float(user_input)
+#     cart = []
+#     if user_inputF == 1:
+#         print('You have chosen to add items to your cart.')
+#         add_item = input('Type the item you wish to add here: ')
+#         cart.append(add_item)
+#         print('Items in your cart:', cart)
+#         add_more = input('Would you like to add another? Yes or No: ')
 
-        while True:
+#         while True:
 
-            if add_more == 'Yes' or add_more == 'Y':
-                add_item = input('Type the item you wish to add here: ')
-                cart.append(add_item)
-                print('Items in your cart:', cart)
-                even_more = input('More?')
-                if even_more == 'y' or even_more == 'yes':
-                    add_item = input('Type the item you wish to add here: ')
-                    cart.append(add_item)
-                    print('Items in your cart:', cart)
-                elif even_more == 'n' or even_more == 'no':
-                    print('abdscsewferwfgs')
+#             if add_more == 'Yes' or add_more == 'Y':
+#                 add_item = input('Type the item you wish to add here: ')
+#                 cart.append(add_item)
+#                 print('Items in your cart:', cart)
+#                 even_more = input('More?')
+#                 if even_more == 'y' or even_more == 'yes':
+#                     add_item = input('Type the item you wish to add here: ')
+#                     cart.append(add_item)
+#                     print('Items in your cart:', cart)
+#                 elif even_more == 'n' or even_more == 'no':
+#                     print('abdscsewferwfgs')
 
-            elif add_more == 'No' or add_more == 'N':
-                print('Okay, proceeding to the next step')
-            else:
-                print('Okay, proceeding to the next step.')
-                continue
+#             elif add_more == 'No' or add_more == 'N':
+#                 print('Okay, proceeding to the next step')
+#             else:
+#                 print('Okay, proceeding to the next step.')
+#                 continue
         
-    elif user_inputF == 2:
-        print('You have chosen to remove items from the cart.')
-        remove_item = input('Type the item you wish to remove here: ')
+#     elif user_inputF == 2:
+#         print('You have chosen to remove items from the cart.')
+#         remove_item = input('Type the item you wish to remove here: ')
 
-    else:
-        print('Okay, proceeding to checkout.')
+#     else:
+#         print('Okay, proceeding to checkout.')
         
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
@@ -263,7 +263,7 @@ def add_products_post():
     if user_id is None:
         pass
     # session['user_id'] = 'test_user'
-    created_by = flask_session['user_id']
+    created_by = session['USER_NAME']
 
     # Ensure the user exists in the USERS table
     user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
@@ -283,6 +283,7 @@ def add_products_post():
 @app.route('/update', methods=['POST'])
 def update_product():
     PID = request.form['PID']
+    
     # category = request.form['category']
     conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,})
     conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
@@ -294,7 +295,7 @@ def update_product():
 
 @app.route('/delete', methods=['POST'])
 def delete_product():
-    created_by = flask_session['user_id']
+    # created_by = session['USER_NAME']
     PID = request.form['PID']
     conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
