@@ -1,15 +1,14 @@
 
 
-from flask import Flask, render_template, request, redirect
-from sqlalchemy import create_engine, text
-# from sqlalchemy.dialects import mysql
-from sqlalchemy.orm import sessionmaker
-from flask import session as flask_session
+# from flask import Flask, render_template, request, redirect
+# from sqlalchemy import create_engine, text
+# # from sqlalchemy.dialects import mysql
+# from sqlalchemy.orm import sessionmaker
+# from flask import session as flask_session
 
-app = Flask(__name__)
-app.secret_key = 'password123'
-connect = "mysql://root:Applepine13.!@localhost/ECOM"
-engine = create_engine(connect, echo=True)
+
+# connect = "mysql://root:Applepine13.!@localhost/ECOM"
+# engine = create_engine(connect, echo=True)
 
 
 
@@ -35,7 +34,8 @@ engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
-
+app = Flask(__name__)
+app.secret_key = 'hola'
 
 
 # displays the home page
@@ -136,7 +136,7 @@ def logout():
 
 
 
-# -- Start of Log out --
+# -- Start of Log out ----------------------------------------------------------------------------------------------------------
 
 
 
@@ -160,7 +160,7 @@ def account_info():
         user_data = account.fetchone()
         if user_data:
             return render_template("my_account.html", user_data=user_data)
-    return redirect(url_for('login'))
+    return redirect(url_for('loginUser'))
 
 # ------------------------------------------------ End of User Accounts --------------------------------------------------------------
 
@@ -180,17 +180,8 @@ def showAdmin():
 
 
 
+
 # ------------------------------------------------ Start of Product ------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -202,26 +193,45 @@ def showAdmin():
 
 
 # ------------------------------------------------ Start of checkout ------------------------------------------------------------
+cart_items = {
+    'apple': 3,
+    'banana': 6,
+    'orange': 2
+}
 
+def calculate_price():
+    prices = {
+        'apple': 0.5,
+        'banana': 0.3,
+        'orange': 0.25
+    }
+
+    total_price = sum(prices[item] * quantity for item, quantity in cart_items)
 # just making sure this works in the terminal first
-while True:
-    user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
-    user_inputF = float(user_input)
-    cart = []
-    if user_inputF == 1:
-        print('You have chosen to add items to your cart.')
-        add_item = input('Type the item you wish to add here: ')
-        cart.append(add_item)
-        print('Items in your cart:', cart)
-        add_more = input('Would you like to add another? Yes or No: ')
+@app.route('/checkout', methods=['GET'])
+def display_checkout():
+    return render_template('checkout.html')
 
-        while True:
+@app.route('/checkout', methods=['POST'])
+def checkout_user():
+    while True:
+        user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
+        user_inputF = float(user_input)
+        cart = []
+        if user_inputF == 1:
+            print('You have chosen to add items to your cart.')
+            add_item = input('Type the item you wish to add here: ')
+            cart.append(add_item)
+            print('Items in your cart:', cart)
+            add_more = input('Would you like to add another? Yes or No: ')
 
-            if add_more == 'Yes' or add_more == 'Y':
-                add_item = input('Type the item you wish to add here: ')
-                cart.append(add_item)
-                print('Items in your cart:', cart)
-                even_more = input('More?')
+            while True:
+
+                if add_more == 'Yes' or add_more == 'Y':
+                    add_item = input('Type the item you wish to add here: ')
+                    cart.append(add_item)
+                    print('Items in your cart:', cart)
+                    even_more = input('More?')
                 if even_more == 'y' or even_more == 'yes':
                     add_item = input('Type the item you wish to add here: ')
                     cart.append(add_item)
@@ -229,27 +239,26 @@ while True:
                 elif even_more == 'n' or even_more == 'no':
                     print('abdscsewferwfgs')
 
-            elif add_more == 'No' or add_more == 'N':
-                print('Okay, proceeding to the next step')
-            else:
-                print('Okay, proceeding to the next step.')
-                continue
-        
-    elif user_inputF == 2:
-        print('You have chosen to remove items from the cart.')
-        remove_item = input('Type the item you wish to remove here: ')
+                elif add_more == 'No' or add_more == 'N':
+                    print('Okay, proceeding to the next step')
 
-    else:
-        print('Okay, proceeding to checkout.')
-        
+                else:
+                    print('Okay, proceeding to the next step.')
+                    continue
+
+        elif user_inputF == 2:
+            print('You have chosen to remove items from the cart.')
+            remove_item = input('Type the item you wish to remove here: ')
+
+        else:
+            print('Okay, proceeding to checkout.')
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
 
 
 
-
-## Start of Vendor functions ----------------------------------------------------------> Kishaun
+# Start of Vendor functions ----------------------------------------------------------> Kishaun
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -260,7 +269,7 @@ def add_products():
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
     # session['user_id'] = 'test_user'
-    created_by = flask_session['user_id']
+    created_by = session['user_id']
 
     # Ensure the user exists in the USERS table
     user_exists = conn.execute(text('SELECT 1 FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
@@ -291,7 +300,7 @@ def update_product():
 
 @app.route('/delete', methods=['POST'])
 def delete_product():
-    created_by = flask_session['user_id']
+    created_by = session['user_id']
     PID = request.form['PID']
     conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
@@ -380,8 +389,6 @@ def admin_delete_product():
 
 
 
-
-
 ## Start of review section --------------------------------------------------------------------> Kishaun
 @app.route('/review',methods=['GET'])
 def review_get():
@@ -390,7 +397,7 @@ def review_get():
 
 @app.route('/review',methods=['POST'])
 def review_post():
-    username = flask_session['user_id']
+    username = session['user_id']
     rating = request.form['rating']
     desc = request.form['desc']
     img = request.form['img']
@@ -426,59 +433,5 @@ def view_reviews_post():
 if __name__ == '__main__':
     app.run(debug=True)
 
-##
-## Old register and login by Kishaun <3  \-o-/
-# @app.route('/register', methods=['GET'])
-# def register():
-#     return render_template('register.html')
 
-
-
-
-# @app.route('/register', methods=['POST'])
-# def create_user():
-#     conn.execute(text('INSERT INTO USER VALUES (:username, :Name, :Email, :Password, :Account_Type)'), request.form)
-#     conn.commit()
-#     return render_template('login.html')
-
-
-# @app.route('/login', methods=['GET'])
-# def login():
-#     return render_template('login.html')
-
-# @app.route('/login', methods=['POST'])
-# def login_post():
-#     with app.app_context():
-#         engine = create_engine(connect)
-#         Session = sessionmaker(bind=engine)
-#         session = Session()
-#         conn = engine.connect()
-
-#         user = session.execute(text('SELECT USER_NAME, ACCOUNT_TYPE FROM USER WHERE USER_NAME = :username AND PASSWORD = :password'),
-#                                request.form).fetchone()
-#         session.commit()
-#         conn.commit()
-
-#         if user:
-#             if user.ACCOUNT_TYPE == 'Administrator':
-#                 admin = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Administrator"'),
-#                         {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = admin.USER_NAME  # Store the admins id in the session
-#                 return render_template('admin_add_products.html')
-#             elif user.ACCOUNT_TYPE == 'Customer':
-#                 customer = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Customer" '),
-#                                            {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = customer.USER_NAME  # Store the student's ID in the session
-#                 # flask_session['customer_id'] = customer.CustomerID  # Store the student's ID in the session
-
-#                 return render_template('customer.html')
-#             elif user.ACCOUNT_TYPE == 'Vendor':
-#                 vendor = session.execute(text('SELECT * FROM USER WHERE USER_NAME = :username and ACCOUNT_TYPE = "Vendor"'),
-#                                          {'username': user.USER_NAME}).fetchone()
-#                 flask_session['user_id'] = vendor.USER_NAME
-#                 return render_template('add_products.html')
-        
-#         else:
-#             invalid = "Invalid email or password"
-#             return render_template('login.html', invalid=invalid)
-
+    
