@@ -30,8 +30,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
-engine = create_engine(c_str, echo=True)
+# c_str = "mysql://root:cyber241@localhost/ecomm"
+# engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
 
@@ -207,6 +207,9 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
+    user_id = session.get('user_id')
+    if user_id is None:
+        pass
     # session['user_id'] = 'test_user'
     created_by = flask_session['user_id']
 
