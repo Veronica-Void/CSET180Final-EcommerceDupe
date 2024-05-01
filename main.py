@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect
 from sqlalchemy import create_engine, text
 # from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import sessionmaker
-from flask import session as flask_session
+# from flask import session as flask_session
 
 app = Flask(__name__)
 app.secret_key = 'password123'
@@ -283,9 +283,14 @@ def add_products_post():
 @app.route('/update', methods=['POST'])
 def update_product():
     PID = request.form['PID']
+    user_id = session.get('user_id')
+    if user_id is None:
+        pass
+    # session['user_id'] = 'test_user'
+    created_by = session['USER_NAME']
     
     # category = request.form['category']
-    conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,})
+    conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,'created_by': created_by})
     conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
     conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
     conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
@@ -295,7 +300,7 @@ def update_product():
 
 @app.route('/delete', methods=['POST'])
 def delete_product():
-    # created_by = session['USER_NAME']
+    created_by = session['USER_NAME']
     PID = request.form['PID']
     conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
