@@ -168,7 +168,9 @@ def showVendor():
 
 
 # ------------------------------------------------ Start of Product ------------------------------------------------------------
-
+@app.route('/view_products')
+def showProducts():
+    return render_template('/view_products.html')
 
 
 # ------------------------------------------------ End of Product ------------------------------------------------------------
@@ -178,7 +180,7 @@ def showVendor():
 
 
 
-# ------------------------------------------------ Start of checkout ------------------------------------------------------------
+# ------------------------------------------------ Start of checkout (INCOMPLETE) ------------------------------------------------------------
 # just making sure this works in the terminal first
 @app.route('/checkout', methods=['GET'])
 def display_checkout():
