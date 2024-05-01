@@ -92,8 +92,8 @@ def loginUser():
             session['loggedin'] = True
             session['USER_NAME'] = user_data[0]
             session['NAME'] = f"{user_data[1]}"
-            if user_data[4] == 'Admininstrator':
-                return redirect(url_for('admin'))
+            if user_data[4] == 'Administrator':
+                return redirect(url_for('showAdmin'))
             else:
                 return redirect(url_for('home'))
         else:
@@ -102,24 +102,18 @@ def loginUser():
     return render_template('login.html', msg=msg)
 
 
-@app.route('/logout')
-def logout():
-    session.pop('loggedin', None)
-    session.pop('USER_NAME', None)
-    session.pop('NAME', None)
-    return redirect(url_for('loginUser'))
-
 # ------------------------------------------------ End of Login ----------------------------------------------------------------
 
 
 
 # ------------------------------------------------ Start of Log out ------------------------------------------------------------
 
-
-
-
-
-
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('USER_NAME', None)
+    session.pop('NAME', None)
+    return redirect(url_for('loginUser'))
 
 
 # ------------------------------------------------ End of log out ---------------------------------------------------------------
@@ -219,6 +213,7 @@ def checkout_user():
                 else:
                     print('Okay, proceeding to the next step.')
                     continue
+
 
         elif user_inputF == 2:
             print('You have chosen to remove items from the cart.')
@@ -407,5 +402,3 @@ def view_reviews_post():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-    
