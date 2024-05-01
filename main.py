@@ -1,19 +1,4 @@
 
-
-from flask import Flask, render_template, request, redirect
-from sqlalchemy import create_engine, text
-# from sqlalchemy.dialects import mysql
-from sqlalchemy.orm import sessionmaker
-from flask import session as flask_session
-
-app = Flask(__name__)
-app.secret_key = 'hola'
-# engine = create_engine(connect, echo=True)
-
-
-# i keep getting a yellow error whenever I uncomment this import - Vee
-# from flask_mysqldb import MySQL # Gives flask extensions for MySQL making some work easier.
-
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
 
@@ -26,6 +11,10 @@ import hashlib
 
 c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
+
+
+app = Flask(__name__)
+app.secret_key = 'hola'
 
 conn = engine.connect()
 
@@ -111,6 +100,8 @@ def loginUser():
             session['NAME'] = f"{user_data[1]}"
             if user_data[4] == 'Administrator':
                 return redirect(url_for('showAdmin'))
+            elif user_data[4] == 'Vendor':
+                return redirect(url_for('showVendor'))
             else:
                 return redirect(url_for('home'))
         else:
