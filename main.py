@@ -1,39 +1,35 @@
 
 
-from flask import Flask, render_template, request, redirect
-from sqlalchemy import create_engine, text
+# from flask import Flask, render_template, request, redirect, session, flash
+# from sqlalchemy import create_engine, text
 # from sqlalchemy.dialects import mysql
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.orm import sessionmaker
 # from flask import session as flask_session
 
-app = Flask(__name__)
-app.secret_key = 'password123'
-connect = "mysql://root:Applepine13.!@localhost/ECOM"
-engine = create_engine(connect, echo=True)
 
 
 
 
 
-
-
-# i keep getting a yellow error whenever I uncomment this import - Vee
-# from flask_mysqldb import MySQL # Gives flask extensions for MySQL making some work easier.
 
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
 
 from flask import Flask, render_template, request, redirect, session, url_for, flash #imported flask and other things here
-# from flask import session as session
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
-# c_str = "mysql://root:cyber241@localhost/ecomm"
-# engine = create_engine(c_str, echo=True)
+c_str = "mysql://root:Applepine13.!@localhost/ECOM"
+engine = create_engine(c_str, echo=True)
 
 conn = engine.connect()
+
+app = Flask(__name__)
+app.secret_key = 'password123'
+
+
+
 
 
 
