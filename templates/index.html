@@ -1,5 +1,5 @@
 <style>
-</style>
+</style> 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +11,29 @@
 </head>
 <body>
 
+    <header>
+        <div class="navBar">
+            <div class="innerNavBar">
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/">Home Page</a></li>
+                    <li><a href="/my_account">My Account</a></li>
+                    <li><a href="/view_products">Shop</a></li> 
+                    <li><a href="/register">Sign Up</a></li> <!--this page is for sign up-->
+                    <li><a href="/login">Login</a></li>
+                </ul>
+                <button class="barItem input" style="margin-left:10px;">
+                    <a href="/logout" class="btn">Logout</a>
+                </button>
+            </div> 
+        </div>
+    </header>
+
+
     {% extends "base.html" %}
+
     {% block body %}
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
