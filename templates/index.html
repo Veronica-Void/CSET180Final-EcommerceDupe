@@ -31,6 +31,9 @@
         </div>
     </header>
 
+
+    {% extends "base.html" %}
+
     {% block body %}
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
@@ -71,28 +74,6 @@
             
         </div>
     </section>
-    {%endblock%}
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo">
-                    <h3>TheShop</h3>
-                </div>
-                <div class="footer-social">
-                    <h4>Follow Us</h4>
-                    <ul>
-                        <li><a href="#">Facebook</a></li>
-                        <li><a href="#">Twitter</a></li>
-                        <li><a href="#">Instagram</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 TheShop. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
 </body>
 </html>
+{%endblock%}

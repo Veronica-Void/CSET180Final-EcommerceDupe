@@ -9,10 +9,12 @@ import hashlib
 c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
-conn = engine.connect()
 
 app = Flask(__name__)
 app.secret_key = 'hola'
+
+conn = engine.connect()
+
 
 
 # displays the home page
@@ -94,6 +96,8 @@ def loginUser():
             session['NAME'] = f"{user_data[1]}"
             if user_data[4] == 'Administrator':
                 return redirect(url_for('showAdmin'))
+            elif user_data[4] == 'Vendor':
+                return redirect(url_for('showVendor'))
             else:
                 return redirect(url_for('home'))
         else:
