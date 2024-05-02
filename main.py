@@ -8,12 +8,12 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:Applepine13.!@localhost/ECOM"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
 app = Flask(__name__)
-app.secret_key = 'password123'
+app.secret_key = 'hola'
 
 conn = engine.connect()
 
@@ -300,6 +300,7 @@ def admin_add_products_post():
         conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
         conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
         conn.commit()
+        flash('Item added')
     return redirect('/admin_add_products')
 
 
