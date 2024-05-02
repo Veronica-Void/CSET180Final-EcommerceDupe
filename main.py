@@ -179,52 +179,16 @@ def showProducts():
 
 
 # ------------------------------------------------ Start of checkout (INCOMPLETE) ------------------------------------------------------------
-# just making sure this works in the terminal first
-@app.route('/checkout', methods=['GET'])
-def display_checkout():
-    return render_template('checkout.html')
-
-@app.route('/checkout', methods=['POST'])
-def checkout_user():
-    while True:
-        user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
-        user_inputF = float(user_input)
-        cart = []
-        if user_inputF == 1:
-            print('You have chosen to add items to your cart.')
-            add_item = input('Type the item you wish to add here: ')
-            cart.append(add_item)
-            print('Items in your cart:', cart)
-            add_more = input('Would you like to add another? Yes or No: ')
-
-            while True:
-
-                if add_more == 'Yes' or add_more == 'Y':
-                    add_item = input('Type the item you wish to add here: ')
-                    cart.append(add_item)
-                    print('Items in your cart:', cart)
-                    even_more = input('More?')
-                if even_more == 'y' or even_more == 'yes':
-                    add_item = input('Type the item you wish to add here: ')
-                    cart.append(add_item)
-                    print('Items in your cart:', cart)
-                elif even_more == 'n' or even_more == 'no':
-                    print('abdscsewferwfgs')
-
-                elif add_more == 'No' or add_more == 'N':
-                    print('Okay, proceeding to the next step')
-
-                else:
-                    print('Okay, proceeding to the next step.')
-                    continue
 
 
-        elif user_inputF == 2:
-            print('You have chosen to remove items from the cart.')
-            remove_item = input('Type the item you wish to remove here: ')
 
-        else:
-            print('Okay, proceeding to checkout.')
+
+
+
+
+
+
+
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
