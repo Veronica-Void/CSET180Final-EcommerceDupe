@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 
+
 c_str = "mysql://root:Applepine13.!@localhost/ECOM"
 engine = create_engine(c_str, echo=True)
 
@@ -181,51 +182,41 @@ def showProducts():
 
 
 # ------------------------------------------------ Start of checkout (INCOMPLETE) ------------------------------------------------------------
-# just making sure this works in the terminal first
-# while True:
-#     user_input = input('Select an option to do something in your cart.\n\t 1 = Add item,\n\t 2 = Remove item,\n\t 3 = Purchase items.\n\tChoose here: ')
-#     user_inputF = float(user_input)
-#     cart = []
-#     if user_inputF == 1:
-#         print('You have chosen to add items to your cart.')
-#         add_item = input('Type the item you wish to add here: ')
-#         cart.append(add_item)
-#         print('Items in your cart:', cart)
-#         add_more = input('Would you like to add another? Yes or No: ')
 
-#         while True:
+# Add to Cart - Jaiden
+@app.route('/add_to_cart/<int:product_id>')
+def add_to_cart(product_id):
+    if 'cart' not in session:
+        session['cart'] = []
 
-#             if add_more == 'Yes' or add_more == 'Y':
-#                 add_item = input('Type the item you wish to add here: ')
-#                 cart.append(add_item)
-#                 print('Items in your cart:', cart)
-#                 even_more = input('More?')
-#                 if even_more == 'y' or even_more == 'yes':
-#                     add_item = input('Type the item you wish to add here: ')
-#                     cart.append(add_item)
-#                     print('Items in your cart:', cart)
-#                 elif even_more == 'n' or even_more == 'no':
-#                     print('abdscsewferwfgs')
+    session['cart'].append(product_id)
+    flash('Item added to cart!')
+    return redirect(url_for('showProducts'))
 
-#             elif add_more == 'No' or add_more == 'N':
-#                 print('Okay, proceeding to the next step')
-#             else:
-#                 print('Okay, proceeding to the next step.')
-#                 continue
-        
-#     elif user_inputF == 2:
-#         print('You have chosen to remove items from the cart.')
-#         remove_item = input('Type the item you wish to remove here: ')
 
-#     else:
-#         print('Okay, proceeding to checkout.')
+# Remove from Cart - Jaiden
+@app.route('/remove_from_cart/<int:product_id>')
+def remove_from_cart(product_id):
+    if 'cart' in session and product_id in session['cart']:
+        session['cart'].remove(product_id)
+        flash('Item removed from cart!')
+    return redirect(url_for('showCart'))
 
-#         elif user_inputF == 2:
-#             print('You have chosen to remove items from the cart.')
-#             remove_item = input('Type the item you wish to remove here: ')
 
-#         else:
-#             print('Okay, proceeding to checkout.')
+# A route to display the actual cart - Jaiden
+@app.route('/cart')
+def showCart():
+    cart_items = []
+    if 'cart' in session:
+
+        product_ids = session['cart']
+        for product_id in product_ids:
+            
+            product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
+            if product:
+                cart_items.append(product)
+    return render_template('cart.html', cart_items=cart_items)
+
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
@@ -287,10 +278,7 @@ def delete_product():
     conn.commit()
     return redirect(url_for('add_products'))
 
-
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
-
-
 
 ## Start of admin functions----------------------------------------------------------> Kishaun
 @app.route('/admin_add_products', methods=['GET'])
@@ -303,15 +291,17 @@ def admin_add_products_post():
     created_by = request.form['vendor_username']
 
     # Ensure the user exists in the USERS table
-    user_exists = conn.execute(text('SELECT * FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
+
+    user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
     if not user_exists:
-        conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
-    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-    conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-    conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
-    conn.commit()
-    return redirect(url_for('admin_add_products'))
+        conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
+        conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
+        conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
+        conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
+        conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
+        conn.commit()
+    return redirect('/admin_add_products')
+
 
 
 @app.route('/all_accounts', methods=['GET'])
@@ -398,6 +388,8 @@ def view_reviews_post():
     conn.commit()
     return render_template('view_reviews.html', reviews=reviews)
 ## End of review section-------------------------------------------------------------------------------------> Kishaun
+
+
 
 
 
