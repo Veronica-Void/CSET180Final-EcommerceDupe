@@ -1,3 +1,44 @@
+<style>
+.un_container{
+    display: inline-block;
+    justify-content: space-between;
+    padding: 0;
+}
+.un_container_item{
+    list-style-type: none;
+    padding-bottom: 2vh;
+    height: 25vh;
+}
+.list_item {
+    background-color: #fff;
+    padding: 50px 0;
+    text-align: center;
+}
+.display_div{
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+}
+
+.display_list{
+    display: flex;
+    float: left;
+    list-style-type: none;
+    height: 30vh;
+    margin: 0;
+    padding: 0px 6px 0px 6px;
+}
+
+.list_item{
+    display: block;
+    margin: 0px 20px 0px 20px ;
+    height: 25px;
+}
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,81 +46,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% extends 'base.html' %}
 <body>
-    {% extends 'index.html' %}
     {% block body %}
     <section class="products">
-        <div class="container">
-            <h2>Featured Products</h2>
-            <div class="product">
-                <img src="product1.jpg" alt="Product 1">
-                <h3>Product Name</h3>
-                <p>Description of the product goes here...</p>
-                <a href="#" class="btn">View Details</a>
-            </div>
-            <div class="product">
-                <img src="product2.jpg" alt="Product 2">
-                <h3>Product Name</h3>
-                <p>Description of the product goes here...</p>
-                <a href="#" class="btn">View Details</a>
-            </div>
-            
+        <div class="display_div">
+            <ul class="ul_container">
+
+                <li class="ul_containter_item">
+                    <ul class="display_list">
+
+                        <h2>Row 1</h2>
+                        <li class="list_item">
+                            <div>
+                                <img src="product1.jpg" alt="Product 1">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product2.jpg" alt="Product 2">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product3.jpg" alt="Product 3">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>  
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product4.jpg" alt="Product 4">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li><br>
+
+                <li class="ul_container_item">
+                    <ul class="display_list">
+
+                        <h2>Row 2</h2>
+                        <li class="list_item">
+                            <div>
+                                <img src="product5.jpg" alt="Product 5">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product6.jpg" alt="Product 6">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product7.jpg" alt="Product 7">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>  
+                        </li> <br>
+        
+                        <li class="list_item">
+                            <div>
+                                <img src="product8.jpg" alt="Product 8">
+                                <h3>Product Name</h3>
+                                <p>Description of the product goes here...</p>
+                                <a href="#" class="btn">View Details</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+ 
+            </ul>     
+  
         </div>
     </section>
-
     {%endblock%}
 </body>
 
 
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.TITLE }}</title>
-</head>
-<body>
-    <h1>{{ product.TITLE }}</h1>
-    <p>{{ product.DESCRIPTION }}</p>
-    <p>Price: ${{ product.PRICE }}</p>
-    <p>Warranty Period: {{ product.WARRANTY_PERIOD }}</p>
-    <p>Number of Items: {{ product.NUMBER_OF_ITEMS }}</p>
-    <h2>Images</h2>
-    <div class="product-images">
-        {% for img in product.images %}
-            <img src="{{ img.IMAGE_URL }}" alt="Product Image">
-        {% endfor %}
-    </div>
-    <h2>Available Colors</h2>
-    <ul>
-        {% for color in product.colors %}
-            <li>{{ color.COLOR }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Available Sizes</h2>
-    <ul>
-        {% for size in product.sizes %}
-            <li>{{ size.SIZE }}</li>
-        {% endfor %}
-    </ul>
-    <form action="{{ url_for('add_to_cart') }}" method="post">
-        <input type="hidden" name="pid" value="{{ product.PID }}">
-        <label for="color">Select Color:</label>
-        <select name="color" id="color">
-            {% for color in product.colors %}
-                <option value="{{ color.COLOR }}">{{ color.COLOR }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="size">Select Size:</label>
-        <select name="size" id="size">
-            {% for size in product.sizes %}
-                <option value="{{ size.SIZE }}">{{ size.SIZE }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <button type="submit">Add to Cart</button>
-    </form>
-</body>
-</html>
