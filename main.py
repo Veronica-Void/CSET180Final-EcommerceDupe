@@ -240,10 +240,6 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
-    # user_id = session.get('user_id')
-    # if user_id is None:
-    #     pass
-    # session['user_id'] = 'test_user'
     created_by = session['USER_NAME']
 
 
@@ -265,10 +261,6 @@ def add_products_post():
 @app.route('/update', methods=['POST'])
 def update_product():
     PID = request.form['PID']
-    user_id = session.get('user_id')
-    if user_id is None:
-        pass
-    # session['user_id'] = 'test_user'
     created_by = session['USER_NAME']
     
     # category = request.form['category']
