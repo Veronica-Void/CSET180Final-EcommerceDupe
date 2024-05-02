@@ -240,9 +240,9 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
-    user_id = session.get('user_id')
-    if user_id is None:
-        pass
+    # user_id = session.get('user_id')
+    # if user_id is None:
+    #     pass
     # session['user_id'] = 'test_user'
     created_by = session['USER_NAME']
 
@@ -257,7 +257,7 @@ def add_products_post():
     conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
-    return redirect('/add_products')
+    return redirect(url_for('add_products'))
 
 
 
@@ -277,7 +277,8 @@ def update_product():
     conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
     conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
-    return redirect('/add_products')
+    return redirect(url_for('add_products'))
+
 
 
 @app.route('/delete', methods=['POST'])
@@ -292,7 +293,8 @@ def delete_product():
     conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'PID': PID, 'created_by': created_by})
     conn.commit()
-    return redirect('/add_products')
+    return redirect(url_for('add_products'))
+
 
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
 
@@ -317,7 +319,7 @@ def admin_add_products_post():
     conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
-    return redirect('/admin_add_products')
+    return redirect(url_for('admin_add_products'))
 
 
 @app.route('/all_accounts', methods=['GET'])
@@ -348,7 +350,7 @@ def admin_update_product():
     conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
     conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
-    return redirect('/admin_add_products')
+    return redirect(url_for('admin_add_products'))
 
 
 @app.route('/admin_delete', methods=['POST'])
@@ -360,7 +362,7 @@ def admin_delete_product():
     conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID AND ADDED_BY_USERNAME = :username'), {'PID': PID, 'username': created_by})
     conn.commit()
-    return redirect('/admin_add_products')
+    return redirect(url_for('admin_add_products'))
 ## End of admin functions--------------------------------------------------------------------> Kishaun
 
 
