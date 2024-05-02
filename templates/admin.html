@@ -1,1 +1,29 @@
-{% extends 'index.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home page</title>
+</head>
+
+
+<body>
+    {% extends 'base.html' %}
+    {% block body %}
+    <h4>This is the admin page. You should see all accounts (except admin) below!</h4>
+    <ul>
+        <li>
+            Username: {{ user_data2 }} 
+        </li>
+        
+        <li>
+            Account Type: {{ user_data2 }}
+        </li>
+        
+    </ul>
+    {%endblock%}
+</body>
+</html>
+
+
+

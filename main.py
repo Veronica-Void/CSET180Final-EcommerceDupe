@@ -25,7 +25,7 @@ conn = engine.connect()
 def home():
     return render_template('/index.html')
 
-# ------------------------------------------------ Start of Register ------------------------------------------------------------
+# ------------------------------------------------ Start of Register - Vee
 
 # this function is used in registerUser to hash the password when it is entered by the user and add it to the db
 def hash_password(inputpw):
@@ -72,7 +72,7 @@ def registerUser():
 # ------------------------------------------------ End of Register ------------------------------------------------------------
 
 
-# ------------------------------------------------ Start of Login ------------------------------------------------------------
+# ------------------------------------------------ Start of Login - Jaiden
 @app.route('/login', methods=['GET'])
 # function uses session to display errors when there is a bad login attempt
 def showLogin():
@@ -106,14 +106,14 @@ def loginUser():
         else:
             msg = 'Wrong username or password'
 
-    return render_template('login.html', msg=msg)
+    return render_template('/login.html', msg=msg)
 
 
 # ------------------------------------------------ End of Login ----------------------------------------------------------------
 
 
 
-# ------------------------------------------------ Start of Log out ------------------------------------------------------------
+# ------------------------------------------------ Start of Log out - Jaiden
 
 @app.route('/logout')
 def logout():
@@ -128,7 +128,7 @@ def logout():
 
 
 
-# ------------------------------------------------ Start of User Accounts ------------------------------------------------------------
+# ------------------------------------------------ Start of User Accounts - Jaiden
 
 @app.route('/my_account', methods=['GET'])
 def account_info():
@@ -137,7 +137,7 @@ def account_info():
         account = conn.execute(text("SELECT * FROM user WHERE USER_NAME = :USER_NAME"), {'USER_NAME': username})
         user_data = account.fetchone()
         if user_data:
-            return render_template("my_account.html", user_data=user_data)
+            return render_template("/my_account.html", user_data=user_data)
     return redirect(url_for('loginUser'))
 
 # ------------------------------------------------ End of User Accounts --------------------------------------------------------------
@@ -146,16 +146,28 @@ def account_info():
 
 
 
-# ------------------------------------------------ Start of Admin ------------------------------------------------------------
+# ------------------------------------------------ Start of Admin accounts - Vee
 
 # temporary view of admin
 @app.route('/admin')
 def showAdmin():
     return render_template('/admin.html')
 
+@app.route('/admin', methods=['GET'])
+def display_VendorAcc():
+    username = str(session.get('USER_NAME'))
+    if username:
+        show_vendors = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = "Vendor"'), )
+        user_data2 = show_vendors.fetchall()
+        if user_data2:
+            return render_template ('/admin.html', user_data2=user_data2)
+
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
-# ------------------------------------------------ Start of Vendor ------------------------------------------------------------
+
+
+
+# ------------------------------------------------ Start of Vendor accounts - Vee
 
 # temporary view of admin
 @app.route('/vendor')
@@ -168,7 +180,7 @@ def showVendor():
 
 
 
-# ------------------------------------------------ Start of Product ------------------------------------------------------------
+# ------------------------------------------------ Start of Product page - Vee
 @app.route('/view_products')
 def showProducts():
     return render_template('/view_products.html')
@@ -181,7 +193,7 @@ def showProducts():
 
 
 
-# ------------------------------------------------ Start of checkout (INCOMPLETE) ------------------------------------------------------------
+# ------------------------------------------------ Start of checkout - Jaiden
 
 # Add to Cart - Jaiden
 @app.route('/add_to_cart/<int:product_id>')
@@ -216,6 +228,7 @@ def showCart():
             if product:
                 cart_items.append(product)
     return render_template('cart.html', cart_items=cart_items)
+
 
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
@@ -279,6 +292,7 @@ def delete_product():
     return redirect(url_for('add_products'))
 
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
+
 
 ## Start of admin functions----------------------------------------------------------> Kishaun
 @app.route('/admin_add_products', methods=['GET'])
