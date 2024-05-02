@@ -237,8 +237,6 @@ def add_products():
     return render_template('add_products.html')
 
 
-
-
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
     # session['user_id'] = 'test_user'
@@ -285,13 +283,6 @@ def delete_product():
 
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
 
-@app.route('/product_page', methods=['GET'])
-def view_products():
-    pass
-
-@app.route('/product_page', methods=['POST'])
-def view_products_post():   
-    pass
 
 
 ## Start of admin functions----------------------------------------------------------> Kishaun
