@@ -1,4 +1,4 @@
-  <!-- <style>
+  <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
@@ -74,7 +74,7 @@
       font-size: 14px;
       margin-top: 5px;
     }
-  </style> -->
+  </style>
 
 <!-- <!DOCTYPE html> -->
 <!-- <html>
@@ -119,6 +119,15 @@
     <label for="size">Size:</label>
     <input type="text" id="size" name="size">
     <input type="submit" value="Add Product">
+  </form>
+
+  <h2>Add More Images</h2>
+  <form action="/add_more_images" method="post">
+    <label for="PID">PID:</label>
+    <input type="text" id="PID" name="PID">
+    <label for="imagesURL">Image URL:</label>
+    <input type="text" id="imagesURL" name="imagesURL">
+    <input type="submit" value="Add Image">
   </form>
 
   <h2>Delete Product</h2>

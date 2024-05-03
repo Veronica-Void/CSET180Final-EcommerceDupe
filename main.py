@@ -257,7 +257,17 @@ def add_products_post():
     conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
+    flash('Product Added!')
     return redirect(url_for('add_products'))
+
+
+@app.route('/add_more_images',methods=['POST'])
+def add_more_images_():
+    PID = request.form['PID']
+    imagesURL = request.form['imagesURL']
+    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    return redirect(url_for('add_products'))
+
 
 
 
@@ -273,6 +283,7 @@ def update_product():
     conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
     conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
+    flash('Item Edited')
     return redirect(url_for('add_products'))
 
 
@@ -289,6 +300,7 @@ def delete_product():
     conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'PID': PID, 'created_by': created_by})
     conn.commit()
+    flash('Item Deleted')
     return redirect(url_for('add_products'))
 
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
@@ -333,7 +345,7 @@ def search_account():
         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
     conn.commit()
     print(users)
-    return render_template('all_accounts.html', users=users)
+    return render_template('admin.html', users=users)
 
 
 
