@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:Applepine13.!@localhost/ECOM"
 engine = create_engine(c_str, echo=True)
 
 
