@@ -373,7 +373,7 @@ def review_get():
 
 @app.route('/review',methods=['POST'])
 def review_post():
-    username = session['user_id']
+    username = session.get('USER_NAME')
     rating = request.form['rating']
     desc = request.form['desc']
     img = request.form['img']
