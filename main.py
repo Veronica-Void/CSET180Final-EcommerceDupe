@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -219,15 +219,21 @@ def remove_from_cart(product_id):
 @app.route('/cart')
 def showCart():
     cart_items = []
+    total = 0
     if 'cart' in session:
-
         product_ids = session['cart']
         for product_id in product_ids:
             
             product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
             if product:
-                cart_items.append(product)
-    return render_template('cart.html', cart_items=cart_items)
+
+                existing_product = next((item for item in cart_items if item['pid'] == product[0]), None)
+                if existing_product:
+                    existing_product['quantity'] += 1
+                else:
+                    cart_items.append({'pid': product[0], 'name': product[1], 'price': product[2], 'size':product[3], 'color': product[4], 'quantity': 1})
+                total += product[2]
+    return render_template('cart.html', cart_items=cart_items, total=total)
 
 
 
@@ -253,9 +259,9 @@ def add_products_post():
     #     conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Test User'})
 
     conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-    conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-    conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
+    conn.execute(text('INSERT INTO PRODUCT_IMAGES (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
+    conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
+    conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
     return redirect(url_for('add_products'))
 
@@ -269,9 +275,9 @@ def update_product():
     
     # category = request.form['category']
     conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,'created_by': created_by})
-    conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
-    conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
-    conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_IMAGES SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_COLOR SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_SIZE SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
     return redirect(url_for('add_products'))
 
@@ -283,10 +289,10 @@ def delete_product():
     created_by = session['USER_NAME']
 
     PID = request.form['PID']
-    conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM Review WHERE PRODUCT = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_IMAGES WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'PID': PID, 'created_by': created_by})
     conn.commit()
     return redirect(url_for('add_products'))
@@ -302,7 +308,7 @@ def admin_add_products():
 
 @app.route('/admin_add_products', methods=['POST'])
 def admin_add_products_post():
-    created_by = request.form['vendor_username']
+    created_by = session.get('USER_NAME')
 
     # Ensure the user exists in the USERS table
 
@@ -310,9 +316,9 @@ def admin_add_products_post():
     if not user_exists:
         conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
         conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-        conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-        conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-        conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
+        conn.execute(text('INSERT INTO PRODUCT_IMAGES (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
+        conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
+        conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
         conn.commit()
         flash('Item added')
     return redirect('/admin_add_products')
@@ -343,9 +349,9 @@ def admin_update_product():
     PID = request.form['PID']
     # category = request.form['category']
     conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,})
-    conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
-    conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
-    conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_IMAGES SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_COLOR SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_SIZE SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
     return redirect(url_for('admin_add_products'))
 
@@ -354,9 +360,9 @@ def admin_update_product():
 def admin_delete_product():
     PID = request.form['PID']
     created_by = request.form['vendor_username']
-    conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_IMAGES WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID AND ADDED_BY_USERNAME = :username'), {'PID': PID, 'username': created_by})
     conn.commit()
     return redirect(url_for('admin_add_products'))
