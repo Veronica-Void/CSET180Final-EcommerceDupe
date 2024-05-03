@@ -100,6 +100,18 @@
   </button> 
 </nav>
 <h2>Admin Add Product</h2>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flash-messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+
 <form action="/admin_add_products" method="post">
   <label for="vendor_username">Vendor Username:</label><br>
   <input type="text" id="vendor_username" name="vendor_username"><br>

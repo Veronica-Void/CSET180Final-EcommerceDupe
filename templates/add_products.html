@@ -1,4 +1,4 @@
-  <style>
+  <!-- <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f2f2f2;
@@ -74,17 +74,19 @@
       font-size: 14px;
       margin-top: 5px;
     }
-  </style>
+  </style> -->
 
-<!DOCTYPE html>
-<html>
+<!-- <!DOCTYPE html> -->
+<!-- <html>
 <head>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../static/style.css">
   <title>Title</title>
 </head>
 
-<body>
+<body> -->
+  {%extends 'index.html'%}
+  {% block body %}
   <nav>
     <ul>
       <li><a href="/">Home</a></li>
@@ -160,5 +162,6 @@
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-</body>
-</html>
+  {% endblock %}
+<!-- </body>
+</html> -->
