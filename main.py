@@ -244,7 +244,7 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
-    created_by = session['USER_NAME']
+    created_by = session.get('USER_NAME')
 
 
     # Ensure the user exists in the USERS table
