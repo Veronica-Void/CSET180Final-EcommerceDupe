@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -187,7 +187,7 @@ def showProducts():
 
 
 # ------------------------------------------------ End of Product ------------------------------------------------------------
-
+ 
 
 
 
