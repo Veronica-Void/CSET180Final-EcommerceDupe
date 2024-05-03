@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -219,15 +219,21 @@ def remove_from_cart(product_id):
 @app.route('/cart')
 def showCart():
     cart_items = []
+    total = 0
     if 'cart' in session:
-
         product_ids = session['cart']
         for product_id in product_ids:
             
             product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
             if product:
-                cart_items.append(product)
-    return render_template('cart.html', cart_items=cart_items)
+
+                existing_product = next((item for item in cart_items if item['pid'] == product[0]), None)
+                if existing_product:
+                    existing_product['quantity'] += 1
+                else:
+                    cart_items.append({'pid': product[0], 'name': product[1], 'price': product[2], 'size':product[3], 'color': product[4], 'quantity': 1})
+                total += product[2]
+    return render_template('cart.html', cart_items=cart_items, total=total)
 
 
 

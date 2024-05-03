@@ -110,6 +110,28 @@
 
     </section>
     {%endblock%}
+
+    <script>
+        function addToCart(productId) {
+            //A JS function to do a POST request to Flask /add_to_cart (Ask questions if confused)
+            fetch(`/add_to_cart/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId: productId}),
+            })
+            .then(respone => {
+                if (response.ok) {
+                    alert('Item added to cart');
+                } else {
+                    alert('Failed to added item');
+                }
+            })
+            .catch(error => console.error('Error adding item to cart:', error));
+        }
+    </script>
 </body>
+</html>
 
 
