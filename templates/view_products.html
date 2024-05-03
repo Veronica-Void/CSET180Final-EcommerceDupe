@@ -11,26 +11,20 @@
 }
 
 .products_container{
-    width: fit-content;
     display: grid;
     grid-template-columns: auto auto auto;
-    padding: 10px;
+    padding: 10px 0px;
     padding-bottom: 2vh;
     height: auto;
+    float: inline-start;
 }
 
 .actual_product{
+    float: left;
     margin: auto;
-    height: fit-content;
-    border: 2px;
     padding: 10px;
     text-align: center;
-    width: 40vw;
-}
-
-.product_name{
-    text-align: center;
-    width: fit-content;
+    width: 30vw;
 }
 
 
@@ -68,7 +62,7 @@
 
             <div class="actual_product">
                 <img src="product1.jpg" alt="Product 1">
-                <h3>Product Name</h3>
+                <h3 class="product_name">Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
                 <a href="#" class="add_to">Add to cart</a>
@@ -84,7 +78,7 @@
 
             <div class="actual_product">
                 <img src="product1.jpg" alt="Product 1">
-                <h3>Product Name</h3>
+                <h3 class="product_name">Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
                 <a href="#" class="add_to">Add to cart</a>
@@ -100,11 +94,13 @@
 
             <div class="actual_product">
                 <img src="product1.jpg" alt="Product 1">
-                <h3>Product Name</h3>
+                <h3 class="product_name">Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
                 <a href="#" class="add_to">Add to cart</a>
             </div>
+
+
 
         </div>
 
