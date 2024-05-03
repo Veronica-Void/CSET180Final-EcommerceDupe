@@ -1,1 +1,47 @@
 {% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    <div class="cart-items">
+        {% if cart_items %}
+            <table>
+                <thread>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thread>
+                <tbody>
+                    {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.price }}</td>
+                            <td>{{ item.size }}</td>
+                            <td>{{ item.color }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price * item.quantity }}</td>
+                            <td>
+                                <a href="{{ url_for('remove_from_cart', product_id=item.id) }}">Remove</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>Total: ${{ total }}</p>
+        {{% else %}}
+            <p>Cart is empty</p>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('showProducts') }}">Continue Shopping</a>
+</body>
