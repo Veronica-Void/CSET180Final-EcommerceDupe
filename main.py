@@ -103,7 +103,7 @@ def loginUser():
         else:
             msg = 'Wrong username or password'
 
-    return render_template('login.html', msg=msg)
+    return render_template('/login.html', msg=msg)
 
 
 # ------------------------------------------------ End of Login ----------------------------------------------------------------
@@ -134,7 +134,7 @@ def account_info():
         account = conn.execute(text("SELECT * FROM user WHERE USER_NAME = :USER_NAME"), {'USER_NAME': username})
         user_data = account.fetchone()
         if user_data:
-            return render_template("my_account.html", user_data=user_data)
+            return render_template("/my_account.html", user_data=user_data)
     return redirect(url_for('loginUser'))
 
 # ------------------------------------------------ End of User Accounts --------------------------------------------------------------
@@ -149,6 +149,15 @@ def account_info():
 @app.route('/admin')
 def showAdmin():
     return render_template('/admin.html')
+
+@app.route('/admin', methods=['GET'])
+def display_VendorAcc():
+    username = str(session.get('USER_NAME'))
+    if username:
+        show_vendors = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = "Vendor"'), )
+        user_data2 = show_vendors.fetchall()
+        if user_data2:
+            return render_template ('/admin.html', user_data2=user_data2)
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
