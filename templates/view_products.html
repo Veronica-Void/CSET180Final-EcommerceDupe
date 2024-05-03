@@ -1,42 +1,47 @@
 <style>
-.un_container{
-    display: inline-block;
-    justify-content: space-between;
-    padding: 0;
-}
-.un_container_item{
-    list-style-type: none;
-    padding-bottom: 2vh;
-    height: 25vh;
-}
-.list_item {
-    background-color: #fff;
-    padding: 50px 0;
-    text-align: center;
-}
-.display_div{
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 80vh;
-    width: 100%;
-}
-
-.display_list{
-    display: flex;
-    float: left;
-    list-style-type: none;
-    height: 30vh;
-    margin: 0;
-    padding: 0px 6px 0px 6px;
-}
-
-.list_item{
+.products_section{
     display: block;
-    margin: 0px 20px 0px 20px ;
-    height: 25px;
+    justify-content: space-between;
+    list-style-type: none;
+    text-align: center;
+    height: 65vh;
+    width: 100%;
+    padding-top: 1.5vh;
+    padding-bottom: 15vh;
 }
+
+.products_container{
+    width: fit-content;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+    padding-bottom: 2vh;
+    height: auto;
+}
+
+.actual_product{
+    margin: auto;
+    height: fit-content;
+    border: 2px;
+    padding: 10px;
+    text-align: center;
+    width: 40vw;
+}
+
+.product_name{
+    text-align: center;
+    width: fit-content;
+}
+
+
+
+@media screen {
+    .products, .products_container{
+        width: 100%;
+    }
+}
+
+
 </style>
 
 <!DOCTYPE html>
@@ -49,97 +54,60 @@
 {% extends 'base.html' %}
 <body>
     {% block body %}
-    <section class="products">
-        <div class="display_div">
-            <ul class="ul_container">
+    <section class="products_section">
 
-                <li class="ul_containter_item">
-                    <ul class="display_list">
+        <div class="products_container">
 
-                        <h2>Row 1</h2>
-                        <li class="list_item">
-                            <div>
-                                <img src="product1.jpg" alt="Product 1">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product2.jpg" alt="Product 2">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product3.jpg" alt="Product 3">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>  
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product4.jpg" alt="Product 4">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li><br>
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1" class="product_img">
+                <h3 class="product_name">Product Name</h3>
+                <p class="product_desc">Description of the product goes here...</p>
+                <a href="#" class="view_details">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
 
-                <li class="ul_container_item">
-                    <ul class="display_list">
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1">
+                <h3>Product Name</h3>
+                <p>Description of the product goes here...</p>
+                <a href="#" class="btn">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
 
-                        <h2>Row 2</h2>
-                        <li class="list_item">
-                            <div>
-                                <img src="product5.jpg" alt="Product 5">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product6.jpg" alt="Product 6">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product7.jpg" alt="Product 7">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>  
-                        </li> <br>
-        
-                        <li class="list_item">
-                            <div>
-                                <img src="product8.jpg" alt="Product 8">
-                                <h3>Product Name</h3>
-                                <p>Description of the product goes here...</p>
-                                <a href="#" class="btn">View Details</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
- 
-            </ul>     
-  
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1" class="product_img">
+                <h3 class="product_name">Product Name</h3>
+                <p class="product_desc">Description of the product goes here...</p>
+                <a href="#" class="view_details">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
+
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1">
+                <h3>Product Name</h3>
+                <p>Description of the product goes here...</p>
+                <a href="#" class="btn">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
+
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1" class="product_img">
+                <h3 class="product_name">Product Name</h3>
+                <p class="product_desc">Description of the product goes here...</p>
+                <a href="#" class="view_details">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
+
+            <div class="actual_product">
+                <img src="product1.jpg" alt="Product 1">
+                <h3>Product Name</h3>
+                <p>Description of the product goes here...</p>
+                <a href="#" class="btn">View Details</a>
+                <a href="#" class="add_to">Add to cart</a>
+            </div>
+
         </div>
+
     </section>
     {%endblock%}
 </body>
