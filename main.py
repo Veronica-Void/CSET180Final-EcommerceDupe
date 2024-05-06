@@ -262,9 +262,6 @@ def add_more_images_():
     return redirect(url_for('add_products'))
 
 
-
-
-
 @app.route('/update', methods=['POST'])
 def update_product():
     PID = request.form['PID']
@@ -309,8 +306,7 @@ def admin_add_products():
 def admin_add_products_post():
     created_by = request.form['vendor_username']
 
-    # Ensure the user exists in the USERS table
-
+    # Chekcing if the Vendor exists in the USERS table
     user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
     if user_exists:
      conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
