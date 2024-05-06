@@ -12,21 +12,22 @@
         <div class="cart_container">
             <h2>Shopping Cart</h2>
             <div class="cart-items">
-                <script>
-                    var cartItems = JSON.parse('{{ cart_items | tojson | safe }}');
-                    cartItems.forEach(function(item) {
-                        document.write('<div class="cart_item">');
-                        document.write('<img src="' + item.image_url + '" alt="' + item.title + '">');
-                        document.write('<h3>' + item.title + '</h3>');
-                        document.write('<p>Price: ' + item.price + '</p>');
-                        document.write('<p>Size: ' + item.size + '</p>');
-                        document.write('<p>Color: ' + item.color + '</p>');
-                        document.write('<p>Quantity: ' + item.quantity + '</p>');
-                        document.write('</div>');
-                    });
-                </script>
+                {% for item in cart_items %}
+                <div class="cart_item">
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}">
+                    <h3>{{ item.title }}</h3>
+                    <p>Description: {{ item.description }}</p>
+                    <p>Warranty Period: {{ item.warranty_period }}</p>
+                    <p>Number of Items: {{ item.number_of_items }}</p>
+                    <p>Price: ${{ item.price }}</p>
+                    <p>Category: {{ item.category }}</p>
+                    <p>Item Total: ${{ item.item_total }}</p>
+                </div>
+                {% endfor %}
             </div>
+            <p>Total: ${{ total }}</p>
         </div>
     </section>
-    {%endblock%}
+    {% endblock %}
 </body>
+</html>

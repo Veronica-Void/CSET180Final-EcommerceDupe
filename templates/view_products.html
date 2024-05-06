@@ -63,15 +63,15 @@
                 <h3 class="product_name">Product Name</h3>
                 <p class="product_desc">Description of the product goes here...</p>
                 <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(1)">Add to cart</a>
             </div>
 
             <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1">
+                <img src="product2.jpg" alt="Product 2">
                 <h3>Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
             </div>
 
             <div class="actual_product">
@@ -79,7 +79,7 @@
                 <h3 class="product_name">Product Name</h3>
                 <p class="product_desc">Description of the product goes here...</p>
                 <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(3)">Add to cart</a>
             </div>
 
             <div class="actual_product">
@@ -87,7 +87,7 @@
                 <h3>Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(4)">Add to cart</a>
             </div>
 
             <div class="actual_product">
@@ -95,7 +95,7 @@
                 <h3 class="product_name">Product Name</h3>
                 <p class="product_desc">Description of the product goes here...</p>
                 <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(5)">Add to cart</a>
             </div>
 
             <div class="actual_product">
@@ -103,7 +103,7 @@
                 <h3>Product Name</h3>
                 <p>Description of the product goes here...</p>
                 <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
+                <a href="#" class="add_to" onclick="addToCart(6)">Add to cart</a>
             </div>
 
         </div>
@@ -113,19 +113,19 @@
 
     <script>
         function addToCart(productId) {
-            //A JS function to do a POST request to Flask /add_to_cart (Ask questions if confused)
+            // A JS function to do a POST request to Flask /add_to_cart
             fetch(`/add_to_cart/${productId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ productId: productId}),
+                body: JSON.stringify({ productId: productId }),
             })
-            .then(respone => {
+            .then(response => {
                 if (response.ok) {
                     alert('Item added to cart');
                 } else {
-                    alert('Failed to added item');
+                    alert('Failed to add item');
                 }
             })
             .catch(error => console.error('Error adding item to cart:', error));
