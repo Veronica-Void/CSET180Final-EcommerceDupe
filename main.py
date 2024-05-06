@@ -146,21 +146,25 @@ def account_info():
 
 
 
-# ------------------------------------------------ Start of Admin accounts - Vee
+# ------------------------------------------------ Start of Admin accounts - Kishaun
 
-# temporary view of admin
-@app.route('/admin')
-def showAdmin():
-    return render_template('/admin.html')
+# admin views all accounts
+@app.route('/all_accounts', methods=['GET'])
+def all_accounts():
+    return render_template('all_accounts.html')
 
-@app.route('/admin', methods=['GET'])
-def display_VendorAcc():
-    username = str(session.get('USER_NAME'))
-    if username:
-        show_vendors = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = "Vendor"'), )
-        user_data2 = show_vendors.fetchall()
-        if user_data2:
-            return render_template ('/admin.html', user_data2=user_data2)
+
+@app.route('/all_accounts', methods=['POST'])
+def search_account():
+    acc_type = request.form.get('acc_type')
+    if acc_type == 'all':
+        users = conn.execute(text('SELECT * FROM USER')).fetchall()
+    else:
+        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+    conn.commit()
+    print(users)
+    return render_template('all_accounts.html', users=users)
+
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -174,6 +178,10 @@ def display_VendorAcc():
 def showVendor():
     return render_template('/vendor.html')
 
+@app.route('/vendor')
+def showVendor_Products():
+    return redirect(url_for('showVendor'))
+
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
 
@@ -186,7 +194,7 @@ def showProducts():
     return render_template('/view_products.html')
 
 
-# ------------------------------------------------ End of Product ------------------------------------------------------------
+# ------------------------------------------------ End of Product page ------------------------------------------------------------
  
 
 
@@ -242,7 +250,7 @@ def showCart():
 
 
 
-# Start of Vendor functions ----------------------------------------------------------> Kishaun
+# Start of Vendor add/delete/update functions ----------------------------------------------------------> Kishaun
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -325,21 +333,6 @@ def admin_add_products_post():
 
 
 
-@app.route('/all_accounts', methods=['GET'])
-def all_accounts():
-    return render_template('all_accounts.html')
-
-
-@app.route('/all_accounts', methods=['POST'])
-def search_account():
-    acc_type = request.form.get('acc_type')
-    if acc_type == 'all':
-        users = conn.execute(text('SELECT * FROM USER')).fetchall()
-    else:
-        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-    conn.commit()
-    print(users)
-    return render_template('all_accounts.html', users=users)
 
 
 
