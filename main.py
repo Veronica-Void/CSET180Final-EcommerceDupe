@@ -85,15 +85,15 @@ def showLogin():
 def loginUser():
     msg = ''
     if request.method == 'POST' and 'USER_NAME' in request.form and 'PASSWORD' in request.form:
-        username = request.form.get('USER_NAME')
+        username_or_email = request.form.get('USER_NAME') or request.form.get('EMAIL')
         password = request.form.get('PASSWORD')
 
         hashed_password = hash_password(password).hexdigest()
 
-        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :user_name AND PASSWORD = :hashed_password"), {'user_name': username, 'hashed_password': hashed_password})
+        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :identifier OR EMAIL = :identifier"), {'identifier': username_or_email})
         user_data = account.fetchone()
          
-        if user_data:
+        if user_data[3] == hashed_password:
             session['loggedin'] = True
             session['USER_NAME'] = user_data[0]
             session['NAME'] = f"{user_data[1]}"
@@ -105,6 +105,8 @@ def loginUser():
                 return redirect(url_for('home'))
         else:
             msg = 'Wrong username or password'
+    else:
+        msg = 'User not found'
 
     return render_template('/login.html', msg=msg)
 
@@ -195,6 +197,14 @@ def showProducts():
 
 # ------------------------------------------------ Start of checkout - Jaiden
 
+@app.route('/products')
+def show_products():
+    products = [
+        {'id': 1, '1': 'Product 1'},
+        {'id': 2, '2': 'Product 2'},
+    ]
+    return render_template('view_products.html', products=products)
+
 # Add to Cart - Jaiden
 @app.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
@@ -223,17 +233,15 @@ def showCart():
     if 'cart' in session:
         product_ids = session['cart']
         for product_id in product_ids:
-            
             product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
             if product:
-
-                existing_product = next((item for item in cart_items if item['pid'] == product[0]), None)
-                if existing_product:
-                    existing_product['quantity'] += 1
-                else:
-                    cart_items.append({'pid': product[0], 'name': product[1], 'price': product[2], 'size':product[3], 'color': product[4], 'quantity': 1})
-                total += product[2]
+                image_url = conn.execute(text("SELECT imagesURL FROM PRODUCT_IMAGES WHERE PID = :pid"), {'pid': product_id}).fetchone()[0]
+                item_total = product[5] * product[4]
+                cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
+                total += item_total
     return render_template('cart.html', cart_items=cart_items, total=total)
+
+
 
 
 
