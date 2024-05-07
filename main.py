@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -148,21 +148,25 @@ def account_info():
 
 
 
-# ------------------------------------------------ Start of Admin accounts - Vee
+# ------------------------------------------------ Start of Admin accounts - Kishaun
 
-# temporary view of admin
-@app.route('/admin')
-def showAdmin():
-    return render_template('/admin.html')
+# admin views all accounts
+@app.route('/all_accounts', methods=['GET'])
+def all_accounts():
+    return render_template('all_accounts.html')
 
-@app.route('/admin', methods=['GET'])
-def display_VendorAcc():
-    username = str(session.get('USER_NAME'))
-    if username:
-        show_vendors = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = "Vendor"'), )
-        user_data2 = show_vendors.fetchall()
-        if user_data2:
-            return render_template ('/admin.html', user_data2=user_data2)
+
+@app.route('/all_accounts', methods=['POST'])
+def search_account():
+    acc_type = request.form.get('acc_type')
+    if acc_type == 'all':
+        users = conn.execute(text('SELECT * FROM USER')).fetchall()
+    else:
+        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+    conn.commit()
+    print(users)
+    return render_template('all_accounts.html', users=users)
+
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -176,6 +180,10 @@ def display_VendorAcc():
 def showVendor():
     return render_template('/vendor.html')
 
+@app.route('/vendor')
+def showVendor_Products():
+    return redirect(url_for('showVendor'))
+
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
 
@@ -183,12 +191,23 @@ def showVendor():
 
 
 # ------------------------------------------------ Start of Product page - Vee
-@app.route('/view_products')
-def showProducts():
+# shows the actual product page
+@app.route('/view_products', methods=['GET'])
+def showProduct_page():
     return render_template('/view_products.html')
 
+@app.route('/view_products', methods=['GET'])
+def showActual_product():
+    products = conn.execute(text('SELECT TITLE, DESCRIPTION, PRICE FROM PRODUCT'), request.form)
+    productImgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS'))
+    item = products.fetchall()
+    img = productImgs.fetchall()
+    if item and img:
+        render_template('/view_products', item=item, img=img)
+    return redirect(url_for('showProduct_page'))
 
-# ------------------------------------------------ End of Product ------------------------------------------------------------
+
+# ------------------------------------------------ End of Product page ------------------------------------------------------------
  
 
 
@@ -250,7 +269,7 @@ def showCart():
 
 
 
-# Start of Vendor functions ----------------------------------------------------------> Kishaun
+# Start of Vendor add/delete/update functions ----------------------------------------------------------> Kishaun
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -258,16 +277,12 @@ def add_products():
 
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
-    created_by = session['USER_NAME']
+    created_by = session.get('USER_NAME')
 
 
-    # Ensure the user exists in the USERS table
-    # user_exists = conn.execute(text('SELECT * FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
-    # if not user_exists:
-    #     conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Test User'})
-
-    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-    conn.execute(text('INSERT INTO PRODUCT_IMAGES (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
+    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
+    # Grabs the image from the add_product form and adds it to the database 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (LAST_INSERT_ID(), :IMAGE_URL)'), {'IMAGE_URL': request.form['IMAGE_URL']})
     conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
     conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
@@ -308,7 +323,7 @@ def delete_product():
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
 
 
-## Start of admin functions----------------------------------------------------------> Kishaun
+## Start of admin add/delete/update functions----------------------------------------------------------> Kishaun
 @app.route('/admin_add_products', methods=['GET'])
 def admin_add_products():
     return render_template('admin_add_products.html')
@@ -323,7 +338,7 @@ def admin_add_products_post():
     user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
     if not user_exists:
         conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
-        conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
+        conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': request.form['created_by'], 'category': request.form['category']})
         conn.execute(text('INSERT INTO PRODUCT_IMAGES (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
         conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
         conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
@@ -333,21 +348,6 @@ def admin_add_products_post():
 
 
 
-@app.route('/all_accounts', methods=['GET'])
-def all_accounts():
-    return render_template('all_accounts.html')
-
-
-@app.route('/all_accounts', methods=['POST'])
-def search_account():
-    acc_type = request.form.get('acc_type')
-    if acc_type == 'all':
-        users = conn.execute(text('SELECT * FROM USER')).fetchall()
-    else:
-        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-    conn.commit()
-    print(users)
-    return render_template('all_accounts.html', users=users)
 
 
 
