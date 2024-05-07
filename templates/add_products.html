@@ -89,17 +89,13 @@
   {% block body %}
   <nav>
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/add_products">Vendor</a></li>
-      <li><a href="/review">Create review</a></li>
-      <li><a href="/view_reviews">View Reviews</a></li>
-      <li<a href="/login">Logout</a></li>
+      <li><a href="/vendor">Vendor Home</a></li>
     </ul>
     
   </nav>
 
   <h2>Add Product</h2>
-  <form action="/add_products" method="post">
+  <form action="/add_products" method="POST">
     <label for="title">Title:</label>
     <input type="text" id="title" name="title">
     <label for="category">Category:</label>
@@ -113,7 +109,7 @@
     <label for="price">Price:</label>
     <input type="text" id="price" name="price">
     <label for="imagesURL">Image URL:</label>
-    <input type="text" id="imagesURL" name="imagesURL">
+    <input type="text" id="imagesURL" name="IMAGE_URL">
     <label for="color">Color:</label>
     <input type="text" id="color" name="color">
     <label for="size">Size:</label>
@@ -122,14 +118,14 @@
   </form>
 
   <h2>Delete Product</h2>
-  <form action="/delete" method="post">
+  <form action="/delete" method="POST">
     <label for="PID">PID:</label>
     <input type="text" id="PID" name="PID">
     <input type="submit" value="Delete">
   </form>
 
   <h2>Edit Product</h2>
-  <form action="/update" method="post">
+  <form action="/update" method="POST">
     <label for="PID">PID:</label>
     <input type="text" id="PID" name="PID">
     <label for="title">Title:</label>

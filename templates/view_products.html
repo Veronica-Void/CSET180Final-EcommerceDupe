@@ -51,14 +51,17 @@
     <section class="products_section">
 
         <div class="products_container">
-
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1" class="product_img">
-                <h3 class="product_name">Product Name</h3>
-                <p class="product_desc">Description of the product goes here...</p>
-                <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to">Add to cart</a>
-            </div>
+            {% if add_products %}
+                {% for i in products %}
+                    <div class="actual_product">
+                        <img src='{{add_products.IMAGE_URL}}' alt="New Product" class="product_img">
+                        <h3 class="product_name">{{ TITLE }}</h3>
+                        <p class="product_desc">{{ DESCRIPTION }}</p>
+                        <a href="#" class="view_details">View Details</a>
+                        <a href="#" class="add_to">Add to cart</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
             <div class="actual_product">
                 <img src="product1.jpg" alt="Product 1">
