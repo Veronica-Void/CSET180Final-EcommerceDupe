@@ -190,12 +190,18 @@ def showVendor_Products():
 
 # ------------------------------------------------ Start of Product page - Vee
 # shows the actual product page
-@app.route('/view_products')
+@app.route('/view_products', methods=['GET'])
 def showProduct_page():
     return render_template('/view_products.html')
 
-@app.route('/view_products')
+@app.route('/view_products', methods=['GET'])
 def showActual_product():
+    products = conn.execute(text('SELECT TITLE, DESCRIPTION, PRICE FROM PRODUCT'), request.form)
+    productImgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS'))
+    item = products.fetchall()
+    img = productImgs.fetchall()
+    if item and img:
+        render_template('/view_products', item=item, img=img)
     return redirect(url_for('showProduct_page'))
 
 
