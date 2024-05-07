@@ -191,8 +191,12 @@ def showVendor_Products():
 # ------------------------------------------------ Start of Product page - Vee
 # shows the actual product page
 @app.route('/view_products')
-def showProducts():
+def showProduct_page():
     return render_template('/view_products.html')
+
+@app.route('/view_products')
+def showActual_product():
+    return redirect(url_for('showProduct_page'))
 
 
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
@@ -261,11 +265,6 @@ def add_products():
 def add_products_post():
     created_by = session.get('USER_NAME')
 
-
-    # Ensure the user exists in the USERS table
-    # user_exists = conn.execute(text('SELECT * FROM USERS WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
-    # if not user_exists:
-    #     conn.execute(text('INSERT INTO USERS (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Test User'})
 
     conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
     # Grabs the image from the add_product form and adds it to the database 
