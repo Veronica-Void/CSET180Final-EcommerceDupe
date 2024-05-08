@@ -73,7 +73,7 @@
                         <h3 class="product_name">{{ items[i][1] }}</h3>
                         <p class="product_desc">{{ items[i][2] }}</p>
                         <p class="price">${{ items[i][5] }}</p>
-                        <a href="#" class="add_to">Add to cart</a>
+                        <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -86,19 +86,19 @@
 
     <script>
         function addToCart(productId) {
-            //A JS function to do a POST request to Flask /add_to_cart (Ask questions if confused)
+            // A JS function to do a POST request to Flask /add_to_cart
             fetch(`/add_to_cart/${productId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ productId: productId}),
+                body: JSON.stringify({ productId: productId }),
             })
-            .then(respone => {
+            .then(response => {
                 if (response.ok) {
                     alert('Item added to cart');
                 } else {
-                    alert('Failed to added item');
+                    alert('Failed to add item');
                 }
             })
             .catch(error => console.error('Error adding item to cart:', error));
