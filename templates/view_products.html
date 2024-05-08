@@ -56,7 +56,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
 </head>
-{%- extends 'base.html' -%}
+{% extends 'base.html' %}
 <body>
     {% block body %}
     <section class="products_section">
@@ -64,27 +64,15 @@
             {% if items %}
                 {% for i in range(items|length) %}
                     <div class="actual_product" name="item">
-                        {% for img in imgs %}
-                                    {% if img[0] == items[i][0] %}
-                                        <img src="{{ img[1] }}" alt="">
-
-                                    {%endif%}
-                                {% endfor %}
+                        {% if imgs %}
+                            {% for img in imgs %}
+                                <img src="{{ imgs[0][1] }}" alt="">
+                            {% endfor %}
+                        {% endif %}
                         <img src="{{ imgs[0][1] }}" alt="product" class="product_img">
-
-                            <div class="miniIMG_container">
-                                {% for img in imgs %}
-                                    {% if img[0] == items[i][0] %}
-                                        <img src="{{ img[1] }}" alt="" class="miniIMG">
-
-                                    {%endif%}
-                                {% endfor %}
-                            </div>
-
                         <h3 class="product_name">{{ items[i][1] }}</h3>
                         <p class="product_desc">{{ items[i][2] }}</p>
                         <p class="price">${{ items[i][5] }}</p>
-                        <a href="#" class="view_details">View Details</a>
                         <a href="#" class="add_to">Add to cart</a>
                     </div>
                 {% endfor %}

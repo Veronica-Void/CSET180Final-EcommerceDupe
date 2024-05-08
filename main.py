@@ -192,7 +192,7 @@ def showVendor_Products():
 # shows the actual product page
 @app.route('/view_products', methods=['GET', 'POST'])
 def showProduct_page():
-    items = conn.execute(text('Select * from product p ')).all()
+    items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
     print(len(items))
     return render_template('/view_products.html', items=items, imgs=imgs)
