@@ -29,13 +29,22 @@
     height: fit-content;
 }
 
-
+.product_img{
+    width: 300px;
+    height: 275px;
+    border-radius: 20px;
+}
+.miniIMG{
+    width: 50px;
+    height: 50px;
+}
 
 @media screen {
-    .products, .products_container{
+    .products, .products_container, .product_img{
         width: 100%;
     }
 }
+
 
 
 </style>
@@ -47,79 +56,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
 </head>
-{%- extends 'base.html' -%}
+{% extends 'base.html' %}
 <body>
     {% block body %}
     <section class="products_section">
         <div class="products_container">
+            {% if items %}
+                {% for i in range(items|length) %}
+                    <div class="actual_product" name="item">
+                        {% if imgs %}
+                            {% for img in imgs %}
+                                <img src="{{ imgs[0][1] }}" alt="">
+                            {% endfor %}
+                        {% endif %}
+                        <img src="{{ imgs[0][1] }}" alt="product" class="product_img">
+                        <h3 class="product_name">{{ items[i][1] }}</h3>
+                        <p class="product_desc">{{ items[i][2] }}</p>
+                        <p class="price">${{ items[i][5] }}</p>
+                        <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
-            {%- for item in view_products -%}
-                <div class="actual_product" name="item">
-                    {%- for img in view_products -%}
-                    <img src='{{ img[1] }}' alt="New Product" class="product_img">
-                    {%- endfor -%}
-                    <h3 class="product_name">{{ item[1] }}</h3>
-                    <p class="product_desc">{{ item[2] }}</p>
-                    <p class="price">{{ item[5] }}</p>
-                    <a href="#" class="view_details">View Details</a>
-                    <a href="#" class="add_to">Add to cart</a>
-                </div>
-            {%- endfor -%}
-                
-
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1" class="product_img">
-                <h3 class="product_name">Product Name</h3>
-                <p class="product_desc">Description of the product goes here...</p>
-                <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(1)">Add to cart</a>
-            </div>
-
-          
-          
-            <div class="actual_product">
-                <img src="product2.jpg" alt="Product 2" >
-                <h3>Product Name</h3>
-                <p>Description of the product goes here...</p>
-                <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
-            </div>
-
-      
-      
-      
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1" class="product_img">
-                <h3 class="product_name">Product Name</h3>
-                <p class="product_desc">Description of the product goes here...</p>
-                <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(3)">Add to cart</a>
-            </div>
-
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1">
-                <h3 class="product_name">Product Name</h3>
-                <p>Description of the product goes here...</p>
-                <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(4)">Add to cart</a>
-            </div>
-
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1" class="product_img">
-                <h3 class="product_name">Product Name</h3>
-                <p class="product_desc">Description of the product goes here...</p>
-                <a href="#" class="view_details">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(5)">Add to cart</a>
-            </div>
-
-            <div class="actual_product">
-                <img src="product1.jpg" alt="Product 1" class="product_img">
-                <h3 class="product_name">Product Name</h3>
-                <p>Description of the product goes here...</p>
-                <a href="#" class="btn">View Details</a>
-                <a href="#" class="add_to" onclick="addToCart(6)">Add to cart</a>
-            </div>
-
+        
         </div>
 
     </section>
