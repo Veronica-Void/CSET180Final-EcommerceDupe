@@ -409,10 +409,59 @@ def view_reviews_post():
     return render_template('view_reviews.html', reviews=reviews)
 ## End of review section-------------------------------------------------------------------------------------> Kishaun
 
+## Start of complaint section-------------------------------------------------------------------------------------> Kishaun
+@app.route('/create_complaint', methods=['GET'])
+def create_complaint():
+    return render_template('create_complaint.html')
 
+
+@app.route('/create_complaint', methods=['POST'])
+def create_complaint_post():
+    title = request.form['title']  # Add this line to define the variable "title"
+    desc = request.form['desc']
+    demand = request.form['demand']  # assuming this comes from the form
+    status = "Pending"  # assuming a default status
+    reviewUserName = session.get('USER_NAME')  # assuming a default review user
+
+    # Use current date and time for the 'date' field
+    from datetime import datetime
+    now = datetime.now()
+
+    conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
+                 {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName})
+    conn.commit()
+    return redirect('/create_complaint')
+
+
+@app.route('/view_complaints', methods=['GET'])
+def view_complaints():
+    return render_template('view_complaints.html')
+
+
+@app.route('/view_complaints', methods=['POST'])
+def view_complaints_post():
+    status = request.form.get('status')
+    if status:
+        complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE status = :status'), {'status': status}).fetchall()
+    else:
+        complaints = conn.execute(text('SELECT * FROM COMPLAINT')).fetchall()
+    conn.commit()
+    return render_template('view_complaints.html', complaints=complaints)
+
+
+@app.route('/update_complaint', methods=['POST'])
+def update_complaint():
+    complaint_id = request.form['complaint_id']
+    status = request.form['status']
+    conn.execute(text('UPDATE COMPLAINT SET status = :status WHERE CID = :complaint_id'), {'status': status, 'complaint_id': complaint_id})
+    conn.commit()
+    return redirect('/view_complaints')
 
 
 
 if __name__ == '__main__':
     app.run(debug=True)
 
+#   conn.execute(text('UPDATE Customers SET acc_status = :acc_status WHERE CustomerID = :customer_id'),
+#                  {'acc_status': acc_status, 'customer_id': customer_id})
+#     conn.commit()

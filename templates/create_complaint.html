@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block body %}
+    <h1>Create Complaint</h1>
+    <form action="/create_complaint" method="POST">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required><br><br>
+        
+        <label for="desc">Description:</label>
+        <textarea id="desc" name="desc" required></textarea><br><br>
+        
+        <label for="demand">Demand:</label>
+        <input type="text" id="demand" name="demand" required><br><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}
