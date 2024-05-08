@@ -255,10 +255,12 @@ def add_products_post():
 
 
 @app.route('/add_more_images',methods=['POST'])
-def add_more_images_():
+def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
     conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.commit()  
+    flash('Image added')
     return redirect(url_for('add_products'))
 
 
