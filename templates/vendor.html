@@ -1,23 +1,26 @@
 <style>
 
     .products_section{
-        display: block;
-        justify-content: space-between;
-        list-style-type: none;
-        text-align: center;
-        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 10px 0px;
+        padding-bottom: 2vh;
+        height: auto;
+        float: inline-start;
+        flex-wrap: wrap;
         width: 100%;
-        padding-top: 1.5vh;
-        padding-bottom: 15vh;
     }
     
     .products_container{
-        display: grid;
-        grid-template-columns: auto auto auto;
-        padding: 10px 0px;
-        padding-bottom: 2vh;
-        height: 100vh;
-        float: inline-start;
+        padding: 10px;
+        text-align: center;
+        width: 20vw;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: space-evenly;
+        align-items: last baseline;
     }
     
     .actual_product{
@@ -56,7 +59,7 @@
     }
     
     @media screen {
-        .products, .products_container {
+        .products, .products_section {
             width: 100%;
         }
     }
@@ -70,14 +73,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
 </head>
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 <body>    
     {% block body %}
     <h2>Welcome to the vendor page, {{ session['NAME'] }}!</h2>
 
     <ul class="vendor_bar">
         <li><a href="/add_products">Product Actions</a></li>
-        <li><a href="/showVendor_Products">View Your Products</a></li>
+        <li><a href="/vendorproducts">View Your Products</a></li>
         <li><a href="/view_reviews">View Reviews</a></li>
     </ul>
 
@@ -85,8 +88,8 @@
     <section class="products_section">
         <div class="products_container">
 
-            {% if items %}
-                {% for i in range(items|length) %}
+            {% if vendor_products %}
+                {% for i in range(vendor_products|length) %}
                     <div class="actual_product" name="item">
                         {% if imgs %}
                         <img src="{{ imgs[i][1] }}" alt="product" class="product_img">
@@ -97,9 +100,9 @@
                         </div>
                         {% endif %}
     
-                        <h3 class="product_name">{{ items[i][1] }}</h3>
-                        <p class="product_desc">{{ items[i][2] }}</p>
-                        <p class="price">${{ items[i][5] }}</p>
+                        <h3 class="product_name">{{ vendor_products[i][1] }}</h3>
+                        <p class="product_desc">{{ vendor_products[i][2] }}</p>
+                        <p class="price">${{ vendor_products[i][5] }}</p>
                         <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
                     </div>
                 {% endfor %}
