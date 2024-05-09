@@ -27,10 +27,11 @@ def home():
 
 # ------------------------------------------------ Start of Register - Vee
 
-# this function is used in registerUser to hash the password when it is entered by the user and add it to the db
+# function to hash the password when it is entered by the user and add it to the db
 def hash_password(inputpw):
     return hashlib.sha3_256(inputpw.encode())
 
+# check to see if user already exists
 def Checkexist(user_name):
      user_name = str(user_name)
      account = conn.execute(text("SELECT USER_NAME FROM USER WHERE USER_NAME = :USER_NAME"), {'USER_NAME': user_name})
@@ -55,7 +56,7 @@ def registerUser():
         email = request.form.get('EMAIL')
         password = request.form.get('PASSWORD')
         acc_type = request.form.get('ACCOUNT_TYPE')
-        # hashing the password value
+        # hashing the password value from the form
         hashed_password = hash_password(password).hexdigest()
 
         if Checkexist(user_name):
@@ -187,16 +188,19 @@ def showVendor_Products():
     username = str(session.get('USER_NAME'))
 
     # getting products and images from the db
+    # query that joins product and product imgs table together to get details and photos.
     items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
 
     # message to be displayed when vendor logs in but has no products
     no_products = "Looks like you don't have any products..."
+    print(no_products)
 
-    # getting all the products from the db for a specific vendor so that they will be displa
-    vendor_products = conn.execute(text("SELECT * FROM PRODUCT WHERE ACCOUNT_TYPE = 'Vendor' AND USER_NAME = :USER_NAME"), {'USER_NAME': username}).fetchall()
+    # getting all the products from the db for a specific vendor so that they will be displayed on the vendor page
+    # query that joins product table and user table together to get products for a specific vendor
+    vendor_products = conn.execute(text("SELECT * FROM PRODUCT prod join USER acc WHERE acc.ACCOUNT_TYPE = 'Vendor' AND acc.USER_NAME = :USER_NAME"), {'USER_NAME':username}).fetchall()
 
-    return redirect(url_for('showVendor'), no_products=no_products, vendor_products=vendor_products, items=items, imgs=imgs)
+    return redirect(url_for('showVendor'), items=items, imgs=imgs, no_products=no_products, vendor_products=vendor_products)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
@@ -205,7 +209,7 @@ def showVendor_Products():
 
 
 # ------------------------------------------------ Start of Product page - Vee
-# shows the product page
+# shows the actual page and products
 @app.route('/view_products', methods=['GET', 'POST'])
 def showProduct_page():
     # joining together the product table and product image table
@@ -219,10 +223,6 @@ def showProduct_page():
 
     return render_template('/view_products.html', items=items, imgs=imgs)
 
-# shows the product page
-@app.route('/view_products', methods=['GET'])
-def showActual_product():
-    return redirect(url_for('showProduct_page'))
 
 
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
