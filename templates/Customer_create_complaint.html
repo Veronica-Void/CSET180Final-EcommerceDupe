@@ -12,7 +12,10 @@
             <option value="Refund">Refund</option>
             <option value="Return">Return</option>
             <option value="Warranty Claim">Warranty Claim</option>
-        </select><br><br>
+        </select>
+        <label for="imagesURL">Images:</label>
+        <input type="text" id="imagesURL" name="imagesURL"><br><br>
+        <br><br>
         
         <input type="submit" value="Submit">
     </form>
@@ -26,6 +29,7 @@
                 <th>Demand</th>
                 <th>Date</th>
                 <th>Username</th>
+                <th>Images</th>
                 
             </tr>
         </thead>
@@ -38,8 +42,16 @@
                 <td>{{  complaint.demand  }}</td>
                 <td>{{  complaint.date  }}</td>
                 <td>{{  complaint.reviewUserName  }}</td>
-
+                <td><img src="{{ complaint.imageURL }}" alt="Complaint image"></td>
             {% endfor %}
+        </tbody>
+        <!-- {% for complaint in complaints %}
+        <div>
+            <h2>{{ complaint.title }}</h2>
+            <p>{{ complaint.desc }}</p>
+            <img src="{{ complaint.imageURL }}" alt="Complaint image">
+        </div>
+    {% endfor %} -->
         </table>
         <style>
             body {

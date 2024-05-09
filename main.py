@@ -413,16 +413,21 @@ def view_reviews_post():
 @app.route('/Customer_create_complaint', methods=['GET'])
 def create_complaint():
     reviewUserName = session.get('USER_NAME')
-    complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE reviewUserName = :reviewUserName'), {'reviewUserName': session.get('USER_NAME')}).fetchall()
+    complaints_with_images = conn.execute(text('''
+        SELECT COMPLAINT.*, COMPLAINTIMAGES.imageURL 
+        FROM COMPLAINT 
+        LEFT JOIN COMPLAINTIMAGES ON COMPLAINT.CID = COMPLAINTIMAGES.CID
+        WHERE COMPLAINT.reviewUserName = :reviewUserName
+    '''), {'reviewUserName': session.get('USER_NAME')}).fetchall()
     conn.commit()
-    return render_template('Customer_create_complaint.html', complaints=complaints, reviewUserName=reviewUserName)
-
+    return render_template('Customer_create_complaint.html', complaints=complaints_with_images, reviewUserName=reviewUserName)
+## This app route is used to view the page and all of the complaints that the user has made
 
 @app.route('/Customer_create_complaint', methods=['POST'])
 def create_complaint_post():
     title = request.form['title']  # Add this line to define the variable "title"
     desc = request.form['desc']
-    demand = request.form['demand']  #  this comes from the form
+    demand = request.form['demand']  #  this comes from the form on the page
     status = "Pending" 
     reviewUserName = session.get('USER_NAME')  
 
@@ -430,35 +435,42 @@ def create_complaint_post():
     from datetime import datetime
     now = datetime.now()
 
+    
     conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
-                 {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName})
+                     {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName})
+    conn.execute(text('INSERT INTO COMPLAINTIMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
     conn.commit()
     return redirect('/Customer_create_complaint')
-
-
-# @app.route('/Customer_view_complaints', methods=['GET'])
-# def view_complaints():
-#     reviewUserName = session.get('USER_NAME')
-#     complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE reviewUserName = :reviewUserName'), {'reviewUserName': session.get('USER_NAME')}).fetchall()
-#     conn.commit()
-#     return render_template('Customer_view_complaints.html', complaints=complaints, reviewUserName=reviewUserName)
-    
-
+    ## This app route lets the Customer create a complaint and add it to the database on the Customer_create_complaint page
 
 @app.route('/Admin_view_complaints', methods=['GET'])
 def view_complaints():
     return render_template('Admin_view_complaints.html')
-
+## This app route lets Admins view all complaints in the database on the Admin_view_complaints page
 
 @app.route('/Admin_view_complaints', methods=['POST'])
 def view_complaints_post():
     status = request.form.get('status')
     if status:
-        complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE status = :status'), {'status': status}).fetchall()
+        complaints = conn.execute(text('''
+        SELECT COMPLAINT.*, COMPLAINTIMAGES.imageURL
+        FROM COMPLAINT 
+        LEFT JOIN COMPLAINTIMAGES ON COMPLAINT.CID = COMPLAINTIMAGES.CID
+        WHERE status = :status
+        '''), {'status': status}).fetchall()
     else:
-        complaints = conn.execute(text('SELECT * FROM COMPLAINT')).fetchall()
+        complaints = conn.execute(text(
+            'SELECT COMPLAINT.*, COMPLAINTIMAGES.imageURL FROM COMPLAINT LEFT JOIN COMPLAINTIMAGES ON COMPLAINT.CID = COMPLAINTIMAGES.CID'
+        )).fetchall()
     conn.commit()
     return render_template('Admin_view_complaints.html', complaints=complaints)
+## This app route lets the admin sort complaints by status on the Admin_view_complaints page
+#  complaints_with_images = conn.execute(text('''
+#         SELECT COMPLAINT.*, COMPLAINTIMAGES.imageURL 
+#         FROM COMPLAINT 
+#         LEFT JOIN COMPLAINTIMAGES ON COMPLAINT.CID = COMPLAINTIMAGES.CID
+#         WHERE COMPLAINT.reviewUserName = :reviewUserName
+#     '''), {'reviewUserName': session.get('USER_NAME')}).fetchall()
 
 
 @app.route('/update_complaint', methods=['POST'])
@@ -468,20 +480,19 @@ def update_complaint():
     conn.execute(text('UPDATE COMPLAINT SET status = :status WHERE CID = :complaint_id'), {'status': status, 'complaint_id': complaint_id})
     conn.commit()
     return redirect('/Admin_view_complaints')
-
+## This app route lets the admin update the status of a complaint on the Admin_view_complaints page
 
 @app.route('/delete_complaint', methods=['POST'])
 def delete_complaint():
     complaint_id = request.form['complaint_id']
+    conn.execute(text('DELETE FROM COMPLAINTIMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id})
     conn.execute(text('DELETE FROM COMPLAINT WHERE CID = :complaint_id'), {'complaint_id': complaint_id})
     conn.commit()
     return redirect('/Admin_view_complaints')
+## This app route lets the admin delete a complaint on the Admin_view_complaints page
 
 ## End of complaint section-------------------------------------------------------------------------------------> Kishaun
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-#   conn.execute(text('UPDATE Customers SET acc_status = :acc_status WHERE CustomerID = :customer_id'),
-#                  {'acc_status': acc_status, 'customer_id': customer_id})
-#     conn.commit()
