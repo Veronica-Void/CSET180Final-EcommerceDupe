@@ -175,17 +175,28 @@ def search_account():
 
 # ------------------------------------------------ Start of Vendor accounts - Vee
 
-# temporary view of Vendor
+# Shows the vendor page
 @app.route('/vendor')
 def showVendor():
     return render_template('/vendor.html')
 
+# shows specific products on the Vendor page
 @app.route('/vendor')
 def showVendor_Products():
+    # getting username from session
     username = str(session.get('USER_NAME'))
+
+    # getting products and images from the db
+    items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
+    imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # message to be displayed when vendor logs in but has no products
     no_products = "Looks like you don't have any products..."
+
+    # getting all the products from the db for a specific vendor so that they will be displa
     vendor_products = conn.execute(text("SELECT * FROM PRODUCT WHERE ACCOUNT_TYPE = 'Vendor' AND USER_NAME = :USER_NAME"), {'USER_NAME': username}).fetchall()
-    return redirect(url_for('showVendor'), no_products=no_products, vendor_products=vendor_products)
+
+    return redirect(url_for('showVendor'), no_products=no_products, vendor_products=vendor_products, items=items, imgs=imgs)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
@@ -194,16 +205,21 @@ def showVendor_Products():
 
 
 # ------------------------------------------------ Start of Product page - Vee
-# shows the actual product page
+# shows the product page
 @app.route('/view_products', methods=['GET', 'POST'])
 def showProduct_page():
     # joining together the product table and product image table
     items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
 
+    # grabbing images from the db
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # just checking to see if it's working in the terminal
     print(len(items))
+
     return render_template('/view_products.html', items=items, imgs=imgs)
 
+# shows the product page
 @app.route('/view_products', methods=['GET'])
 def showActual_product():
     return redirect(url_for('showProduct_page'))

@@ -89,7 +89,7 @@
         {% block body %}
         <section class="products_section">
             <div class="products_container">
-                {% if items %}
+                {% if items >=1 %}
                     {% for i in range(items|length) %}
                         <div class="actual_product" name="item">
                             {% if imgs %}
