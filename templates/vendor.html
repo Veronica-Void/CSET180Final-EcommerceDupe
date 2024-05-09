@@ -1,14 +1,114 @@
-{% extends 'base.html' %}
+<style>
 
-{% block body %}
-<h2>This is The Vendor page.</h2>
-<ul>
-    <li><a href="/add_products">Product Actions</a></li>
-    <li><a href="/">View Your Products</a></li>
-    <li><a href="/view_reviews">View Reviews</a></li>
-    <li<a href="/logout">Logout</a></li>
-</ul>
+    .products_section{
+        display: block;
+        justify-content: space-between;
+        list-style-type: none;
+        text-align: center;
+        height: 100vh;
+        width: 100%;
+        padding-top: 1.5vh;
+        padding-bottom: 15vh;
+    }
+    
+    .products_container{
+        display: grid;
+        grid-template-columns: auto auto auto;
+        padding: 10px 0px;
+        padding-bottom: 2vh;
+        height: 100vh;
+        float: inline-start;
+    }
+    
+    .actual_product{
+        margin: auto;
+        padding: 10px;
+        text-align: center;
+        width: 30vw;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    
+    .product_img{
+        width: 300px;
+        height: 275px;
+        border-radius: 20px;
+    }
+    .mini_flexbox{
+        display: flex;
+        overflow-x: scroll;
+        overflow-y: hidden;
+    }
+    .mini_flexbox::-webkit-scrollbar{
+        display: none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .miniIMG{
+        width: 25%;
+        height: 50px;
+        margin-right: 20px;
+        border: none;
+    }
+    
+    @media screen {
+        .products, .products_container {
+            width: 100%;
+        }
+    }
+    
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+</head>
+{% extends 'base.html' %}
+<body>    
+    {% block body %}
+    <h2>Welcome to the vendor page, {{ session['NAME'] }}!</h2>
+
+    <ul class="vendor_bar">
+        <li><a href="/add_products">Product Actions</a></li>
+        <li><a href="/showVendor_Products">View Your Products</a></li>
+        <li><a href="/view_reviews">View Reviews</a></li>
+    </ul>
+
+    <h3>Below you will see the products you have:</h3>
+    <section class="products_section">
+        <div class="products_container">
+
+            {% if items %}
+                {% for i in range(items|length) %}
+                    <div class="actual_product" name="item">
+                        {% if imgs %}
+                        <img src="{{ imgs[i][1] }}" alt="product" class="product_img">
+                        <div class="mini_flexbox">
+                            {% for img in imgs %}
+                                <img src="{{ img[1] }}" alt="product" class="miniIMG">
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+    
+                        <h3 class="product_name">{{ items[i][1] }}</h3>
+                        <p class="product_desc">{{ items[i][2] }}</p>
+                        <p class="price">${{ items[i][5] }}</p>
+                        <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+    {%endblock%}
+</body>
+</html>
 <!-- this page should display all of the products that a particular vendor has -->
 
 <!-- vendor should be able to use their edit/delete/add products here as well? -->
-{%endblock%}

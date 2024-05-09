@@ -27,10 +27,11 @@ def home():
 
 # ------------------------------------------------ Start of Register - Vee
 
-# this function is used in registerUser to hash the password when it is entered by the user and add it to the db
+# function to hash the password when it is entered by the user and add it to the db
 def hash_password(inputpw):
     return hashlib.sha3_256(inputpw.encode())
 
+# check to see if user already exists
 def Checkexist(user_name):
      user_name = str(user_name)
      account = conn.execute(text("SELECT USER_NAME FROM USER WHERE USER_NAME = :USER_NAME"), {'USER_NAME': user_name})
@@ -55,7 +56,7 @@ def registerUser():
         email = request.form.get('EMAIL')
         password = request.form.get('PASSWORD')
         acc_type = request.form.get('ACCOUNT_TYPE')
-        # hashing the password value
+        # hashing the password value from the form
         hashed_password = hash_password(password).hexdigest()
 
         if Checkexist(user_name):
@@ -175,14 +176,31 @@ def search_account():
 
 # ------------------------------------------------ Start of Vendor accounts - Vee
 
-# temporary view of admin
+# Shows the vendor page
 @app.route('/vendor')
 def showVendor():
     return render_template('/vendor.html')
 
-@app.route('/vendor')
+# shows specific products on the Vendor page
+@app.route('/vendorproducts')
 def showVendor_Products():
-    return redirect(url_for('showVendor'))
+    # getting username from session
+    username = str(session.get('USER_NAME'))
+
+    # getting products and images from the db
+    # query that joins product and product imgs table together to get details and photos.
+    items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
+    imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # message to be displayed when vendor logs in but has no products
+    no_products = "Looks like you don't have any products..."
+    print(no_products)
+
+    # getting all the products from the db for a specific vendor so that they will be displayed on the vendor page
+    # query that joins product table and user table together to get products for a specific vendor
+    vendor_products = conn.execute(text("SELECT * FROM PRODUCT prod join USER acc WHERE acc.ACCOUNT_TYPE = 'Vendor' AND acc.USER_NAME = :USER_NAME"), {'USER_NAME':username}).fetchall()
+
+    return render_template('/vendor.html', items=items, imgs=imgs, no_products=no_products, vendor_products=vendor_products)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
@@ -191,19 +209,20 @@ def showVendor_Products():
 
 
 # ------------------------------------------------ Start of Product page - Vee
-# shows the actual product page
+# shows the actual page and products
 @app.route('/view_products', methods=['GET', 'POST'])
 def showProduct_page():
     # joining together the product table and product image table
     items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
 
+    # grabbing images from the db
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # just checking to see if it's working in the terminal
     print(len(items))
+
     return render_template('/view_products.html', items=items, imgs=imgs)
 
-@app.route('/view_products', methods=['GET'])
-def showActual_product():
-    return redirect(url_for('showProduct_page'))
 
 
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
@@ -311,7 +330,7 @@ def delete_product():
     created_by = session['USER_NAME']
 
     PID = request.form['PID']
-    conn.execute(text('DELETE FROM REVIEW WHERE PRODUCT = :PID'), {'PID': PID}) # 'PRODUCT' is not in the Review table, 
+    conn.execute(text('DELETE FROM REVIEW WHERE PRODUCT = :PID'), {'PID': PID}) 
     conn.execute(text('DELETE FROM PRODUCT_IMGS WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
@@ -333,7 +352,6 @@ def admin_add_products_post():
     created_by = session.get('USER_NAME')
 
     # Ensure the user exists in the USERS table
-
     user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
     if not user_exists:
         conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
