@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
     <h1>View Complaints</h1>
-    <form action="/view_complaints" method="POST">
+    <form action="/Admin_view_complaints" method="POST">
         <label for="status">Filter by Status:</label>
         <select name="status" id="status">
             <option value="">All</option>
@@ -34,6 +34,7 @@
                 <td>{{  complaint.reviewUserName  }}</td>
 
             {% endfor %}
+        </table>
         </tr><h2>Update Complaints</h2>
         <form action="/update_complaint" method="POST">
             <label for="complaint_id">Complaint ID:</label>
@@ -45,6 +46,12 @@
             </select><br><br>
             <input type="submit" value="Update">
         </form>
+
+        </tbody><h2>Delete Complaints</h2>
+        <form action="/delete_complaint" method="POST">
+            <label for="complaint_id">Complaint ID:</label>
+            <input type="text" id="complaint_id" name="complaint_id" required><br><br>
+            <input type="submit" value="Delete">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -68,5 +75,25 @@
             tr:nth-child(even) {
                 background-color: #f2f2f2;
             }
+            input[type=submit] {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            h2 {
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+
+            form {
+                max-width: 400px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            
         </style>
   {% endblock %}

@@ -410,12 +410,15 @@ def view_reviews_post():
 ## End of review section-------------------------------------------------------------------------------------> Kishaun
 
 ## Start of complaint section-------------------------------------------------------------------------------------> Kishaun
-@app.route('/create_complaint', methods=['GET'])
+@app.route('/Customer_create_complaint', methods=['GET'])
 def create_complaint():
-    return render_template('create_complaint.html')
+    reviewUserName = session.get('USER_NAME')
+    complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE reviewUserName = :reviewUserName'), {'reviewUserName': session.get('USER_NAME')}).fetchall()
+    conn.commit()
+    return render_template('Customer_create_complaint.html', complaints=complaints, reviewUserName=reviewUserName)
 
 
-@app.route('/create_complaint', methods=['POST'])
+@app.route('/Customer_create_complaint', methods=['POST'])
 def create_complaint_post():
     title = request.form['title']  # Add this line to define the variable "title"
     desc = request.form['desc']
@@ -430,15 +433,24 @@ def create_complaint_post():
     conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
                  {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName})
     conn.commit()
-    return redirect('/create_complaint')
+    return redirect('/Customer_create_complaint')
 
 
-@app.route('/view_complaints', methods=['GET'])
+# @app.route('/Customer_view_complaints', methods=['GET'])
+# def view_complaints():
+#     reviewUserName = session.get('USER_NAME')
+#     complaints = conn.execute(text('SELECT * FROM COMPLAINT WHERE reviewUserName = :reviewUserName'), {'reviewUserName': session.get('USER_NAME')}).fetchall()
+#     conn.commit()
+#     return render_template('Customer_view_complaints.html', complaints=complaints, reviewUserName=reviewUserName)
+    
+
+
+@app.route('/Admin_view_complaints', methods=['GET'])
 def view_complaints():
-    return render_template('view_complaints.html')
+    return render_template('Admin_view_complaints.html')
 
 
-@app.route('/view_complaints', methods=['POST'])
+@app.route('/Admin_view_complaints', methods=['POST'])
 def view_complaints_post():
     status = request.form.get('status')
     if status:
@@ -446,7 +458,7 @@ def view_complaints_post():
     else:
         complaints = conn.execute(text('SELECT * FROM COMPLAINT')).fetchall()
     conn.commit()
-    return render_template('view_complaints.html', complaints=complaints)
+    return render_template('Admin_view_complaints.html', complaints=complaints)
 
 
 @app.route('/update_complaint', methods=['POST'])
@@ -455,9 +467,17 @@ def update_complaint():
     status = request.form['status']
     conn.execute(text('UPDATE COMPLAINT SET status = :status WHERE CID = :complaint_id'), {'status': status, 'complaint_id': complaint_id})
     conn.commit()
-    return redirect('/view_complaints')
+    return redirect('/Admin_view_complaints')
 
 
+@app.route('/delete_complaint', methods=['POST'])
+def delete_complaint():
+    complaint_id = request.form['complaint_id']
+    conn.execute(text('DELETE FROM COMPLAINT WHERE CID = :complaint_id'), {'complaint_id': complaint_id})
+    conn.commit()
+    return redirect('/Admin_view_complaints')
+
+## End of complaint section-------------------------------------------------------------------------------------> Kishaun
 
 if __name__ == '__main__':
     app.run(debug=True)
