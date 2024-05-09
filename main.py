@@ -419,9 +419,9 @@ def create_complaint():
 def create_complaint_post():
     title = request.form['title']  # Add this line to define the variable "title"
     desc = request.form['desc']
-    demand = request.form['demand']  # assuming this comes from the form
-    status = "Pending"  # assuming a default status
-    reviewUserName = session.get('USER_NAME')  # assuming a default review user
+    demand = request.form['demand']  #  this comes from the form
+    status = "Pending" 
+    reviewUserName = session.get('USER_NAME')  
 
     # Use current date and time for the 'date' field
     from datetime import datetime
