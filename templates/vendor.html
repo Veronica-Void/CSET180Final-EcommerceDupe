@@ -73,18 +73,18 @@
 {% extends 'base.html' %}
 <body>    
     {% block body %}
-    <h2>Welcome to the vendor page!</h2>
+    <h2>Welcome to the vendor page, {{ session['NAME'] }}!</h2>
 
     <ul class="vendor_bar">
         <li><a href="/add_products">Product Actions</a></li>
-        <li><a href="/showVendor_products">View Your Products</a></li>
+        <li><a href="/showVendor_Products">View Your Products</a></li>
         <li><a href="/view_reviews">View Reviews</a></li>
     </ul>
 
     <h3>Below you will see the products you have:</h3>
     <section class="products_section">
         <div class="products_container">
-            
+
             {% if items %}
                 {% for i in range(items|length) %}
                     <div class="actual_product" name="item">

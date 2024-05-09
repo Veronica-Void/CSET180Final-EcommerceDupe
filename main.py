@@ -182,7 +182,7 @@ def showVendor():
     return render_template('/vendor.html')
 
 # shows specific products on the Vendor page
-@app.route('/vendor')
+@app.route('/vendorproducts')
 def showVendor_Products():
     # getting username from session
     username = str(session.get('USER_NAME'))
@@ -200,7 +200,7 @@ def showVendor_Products():
     # query that joins product table and user table together to get products for a specific vendor
     vendor_products = conn.execute(text("SELECT * FROM PRODUCT prod join USER acc WHERE acc.ACCOUNT_TYPE = 'Vendor' AND acc.USER_NAME = :USER_NAME"), {'USER_NAME':username}).fetchall()
 
-    return redirect(url_for('showVendor'), items=items, imgs=imgs, no_products=no_products, vendor_products=vendor_products)
+    return render_template('/vendor.html', items=items, imgs=imgs, no_products=no_products, vendor_products=vendor_products)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
