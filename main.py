@@ -175,14 +175,17 @@ def search_account():
 
 # ------------------------------------------------ Start of Vendor accounts - Vee
 
-# temporary view of admin
+# temporary view of Vendor
 @app.route('/vendor')
 def showVendor():
     return render_template('/vendor.html')
 
 @app.route('/vendor')
 def showVendor_Products():
-    return redirect(url_for('showVendor'))
+    username = str(session.get('USER_NAME'))
+    no_products = "Looks like you don't have any products..."
+    vendor_products = conn.execute(text("SELECT * FROM PRODUCT WHERE ACCOUNT_TYPE = 'Vendor' AND USER_NAME = :USER_NAME"), {'USER_NAME': username}).fetchall()
+    return redirect(url_for('showVendor'), no_products=no_products, vendor_products=vendor_products)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
@@ -311,7 +314,7 @@ def delete_product():
     created_by = session['USER_NAME']
 
     PID = request.form['PID']
-    conn.execute(text('DELETE FROM REVIEW WHERE PRODUCT = :PID'), {'PID': PID}) # 'PRODUCT' is not in the Review table, 
+    conn.execute(text('DELETE FROM REVIEW WHERE PRODUCT = :PID'), {'PID': PID}) 
     conn.execute(text('DELETE FROM PRODUCT_IMGS WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
     conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
@@ -333,7 +336,6 @@ def admin_add_products_post():
     created_by = session.get('USER_NAME')
 
     # Ensure the user exists in the USERS table
-
     user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
     if not user_exists:
         conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
