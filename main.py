@@ -440,7 +440,9 @@ def view_reviews_post():
 
 
 # ------------------------------------------------ Start of Chat - Vee
-
+@app.route('/chat')
+def showChat_page():
+    return render_template ('chat.html')
 
 
 
