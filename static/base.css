@@ -144,6 +144,10 @@ header {
     background-color: #555;
 }
 
+.content{
+    height: fit-content;
+}
+
 footer {
     background-color: #333;
     color: #fff;
