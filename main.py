@@ -166,7 +166,7 @@ def search_account():
         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
     conn.commit()
     print(users)
-    return render_template('all_accounts.html', users=users)
+    return render_template('admin.html', users=users)
 
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
