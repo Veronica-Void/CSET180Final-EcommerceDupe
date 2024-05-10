@@ -8,7 +8,8 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-c_str = "mysql://root:Applepine13.!@localhost/ECOM"
+
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -27,10 +28,11 @@ def home():
 
 # ------------------------------------------------ Start of Register - Vee
 
-# this function is used in registerUser to hash the password when it is entered by the user and add it to the db
+# function to hash the password when it is entered by the user and add it to the db
 def hash_password(inputpw):
     return hashlib.sha3_256(inputpw.encode())
 
+# check to see if user already exists
 def Checkexist(user_name):
      user_name = str(user_name)
      account = conn.execute(text("SELECT USER_NAME FROM USER WHERE USER_NAME = :USER_NAME"), {'USER_NAME': user_name})
@@ -55,7 +57,7 @@ def registerUser():
         email = request.form.get('EMAIL')
         password = request.form.get('PASSWORD')
         acc_type = request.form.get('ACCOUNT_TYPE')
-        # hashing the password value
+        # hashing the password value from the form
         hashed_password = hash_password(password).hexdigest()
 
         if Checkexist(user_name):
@@ -85,15 +87,15 @@ def showLogin():
 def loginUser():
     msg = ''
     if request.method == 'POST' and 'USER_NAME' in request.form and 'PASSWORD' in request.form:
-        username = request.form.get('USER_NAME')
+        username_or_email = request.form.get('USER_NAME') or request.form.get('EMAIL')
         password = request.form.get('PASSWORD')
 
         hashed_password = hash_password(password).hexdigest()
 
-        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :user_name AND PASSWORD = :hashed_password"), {'user_name': username, 'hashed_password': hashed_password})
+        account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :identifier OR EMAIL = :identifier"), {'identifier': username_or_email})
         user_data = account.fetchone()
          
-        if user_data:
+        if user_data[3] == hashed_password:
             session['loggedin'] = True
             session['USER_NAME'] = user_data[0]
             session['NAME'] = f"{user_data[1]}"
@@ -105,6 +107,8 @@ def loginUser():
                 return redirect(url_for('home'))
         else:
             msg = 'Wrong username or password'
+    else:
+        msg = 'User not found'
 
     return render_template('/login.html', msg=msg)
 
@@ -146,21 +150,25 @@ def account_info():
 
 
 
-# ------------------------------------------------ Start of Admin accounts - Vee
+# ------------------------------------------------ Start of Admin accounts - Kishaun
 
-# temporary view of admin
-@app.route('/admin')
-def showAdmin():
-    return render_template('/admin.html')
+# admin views all accounts
+@app.route('/all_accounts', methods=['GET'])
+def all_accounts():
+    return render_template('all_accounts.html')
 
-@app.route('/admin', methods=['GET'])
-def display_VendorAcc():
-    username = str(session.get('USER_NAME'))
-    if username:
-        show_vendors = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = "Vendor"'), )
-        user_data2 = show_vendors.fetchall()
-        if user_data2:
-            return render_template ('/admin.html', user_data2=user_data2)
+
+@app.route('/all_accounts', methods=['POST'])
+def search_account():
+    acc_type = request.form.get('acc_type')
+    if acc_type == 'all':
+        users = conn.execute(text('SELECT * FROM USER')).fetchall()
+    else:
+        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+    conn.commit()
+    print(users)
+    return render_template('all_accounts.html', users=users)
+
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -169,10 +177,31 @@ def display_VendorAcc():
 
 # ------------------------------------------------ Start of Vendor accounts - Vee
 
-# temporary view of admin
+# Shows the vendor page
 @app.route('/vendor')
 def showVendor():
     return render_template('/vendor.html')
+
+# shows specific products on the Vendor page
+@app.route('/vendorproducts')
+def showVendor_Products():
+    # getting username from session
+    username = str(session.get('USER_NAME'))
+
+    # getting products and images from the db
+    # query that joins product and product imgs table together to get details and photos.
+    items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
+    imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # message to be displayed when vendor logs in but has no products
+    no_products = "Looks like you don't have any products..."
+    print(no_products)
+
+    # getting all the products from the db for a specific vendor so that they will be displayed on the vendor page
+    # query that joins product table and user table together to get products for a specific vendor
+    vendor_products = conn.execute(text("SELECT * FROM PRODUCT prod join USER acc WHERE acc.ACCOUNT_TYPE = 'Vendor' AND acc.USER_NAME = :USER_NAME"), {'USER_NAME':username}).fetchall()
+
+    return render_template('/vendor.html', items=items, imgs=imgs, no_products=no_products, vendor_products=vendor_products)
 
 # ------------------------------------------------ End of Vendor --------------------------------------------------------------
 
@@ -181,19 +210,38 @@ def showVendor():
 
 
 # ------------------------------------------------ Start of Product page - Vee
-@app.route('/view_products')
-def showProducts():
-    return render_template('/view_products.html')
+# shows the actual page and products
+@app.route('/view_products', methods=['GET', 'POST'])
+def showProduct_page():
+    # joining together the product table and product image table
+    items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
+
+    # grabbing images from the db
+    imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+
+    # just checking to see if it's working in the terminal
+    print(len(items))
+
+    return render_template('/view_products.html', items=items, imgs=imgs)
 
 
-# ------------------------------------------------ End of Product ------------------------------------------------------------
 
+# ------------------------------------------------ End of Product page ------------------------------------------------------------
+ 
 
 
 
 
 
 # ------------------------------------------------ Start of checkout - Jaiden
+
+@app.route('/products')
+def show_products():
+    products = [
+        {'id': 1, '1': 'Product 1'},
+        {'id': 2, '2': 'Product 2'},
+    ]
+    return render_template('view_products.html', products=products)
 
 # Add to Cart - Jaiden
 @app.route('/add_to_cart/<int:product_id>')
@@ -219,15 +267,19 @@ def remove_from_cart(product_id):
 @app.route('/cart')
 def showCart():
     cart_items = []
+    total = 0
     if 'cart' in session:
-
         product_ids = session['cart']
         for product_id in product_ids:
-            
             product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
             if product:
-                cart_items.append(product)
-    return render_template('cart.html', cart_items=cart_items)
+                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0] #NEED TO CHANGE IMAGESURL TO IMAGE_URL, and product_images to product_imgs
+                item_total = product[5] * product[4]
+                cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
+                total += item_total
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+
 
 
 
@@ -236,7 +288,7 @@ def showCart():
 
 
 
-# Start of Vendor functions ----------------------------------------------------------> Kishaun
+# Start of Vendor add/delete/update functions ----------------------------------------------------------> Kishaun
 @app.route('/add_products', methods=['GET'])
 def add_products():
     return render_template('add_products.html')
@@ -245,10 +297,11 @@ def add_products():
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
     created_by = session.get('USER_NAME')
-    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-    conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-    conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
+    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
+    # Grabs the image from the add_product form and adds it to the database 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (LAST_INSERT_ID(), :IMAGE_URL)'), {'IMAGE_URL': request.form['IMAGE_URL']})
+    conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
+    conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
     conn.commit()
     flash('Product Added!')
     return redirect(url_for('add_products'))
@@ -271,9 +324,9 @@ def update_product():
     
     # category = request.form['category']
     conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,'created_by': created_by})
-    conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
-    conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
-    conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_IMGS SET IMAGE_URL = :IMAGE_URL WHERE PID = :PID'), {'IMAGE_URL': request.form['IMAGE_URL'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_COLOR SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_SIZE SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
     flash('Item Edited')
     return redirect(url_for('add_products'))
@@ -286,11 +339,11 @@ def delete_product():
     created_by = session['USER_NAME']
 
     PID = request.form['PID']
-    conn.execute(text('DELETE FROM Review WHERE Product = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and ADDED_BY_USERNAME = :created_by'), {'PID': PID, 'created_by': created_by})
+    conn.execute(text('DELETE FROM REVIEW WHERE PRODUCT = :PID'), {'PID': PID}) 
+    conn.execute(text('DELETE FROM PRODUCT_IMGS WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID and CREATED_BY = :created_by'), {'PID': PID, 'created_by': created_by})
     conn.commit()
     flash('Item Deleted')
     return redirect(url_for('add_products'))
@@ -298,7 +351,7 @@ def delete_product():
 ## End of Vendor functions ----------------------------------------------------------> Kishaun
 
 
-## Start of admin functions----------------------------------------------------------> Kishaun
+## Start of admin add/delete/update functions----------------------------------------------------------> Kishaun
 @app.route('/admin_add_products', methods=['GET'])
 def admin_add_products():
     return render_template('admin_add_products.html')
@@ -306,27 +359,21 @@ def admin_add_products():
 
 @app.route('/admin_add_products', methods=['POST'])
 def admin_add_products_post():
-    created_by = request.form['vendor_username']
-
-    # Chekcing if the Vendor exists in the USERS table
+    created_by = session.get('USER_NAME')
+    # Ensure the user exists in the USERS table
     user_exists = conn.execute(text('SELECT * FROM User WHERE USER_NAME = :username'), {'username': created_by}).fetchone() is not None
-    if user_exists:
-     conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, Category) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
-     conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']})
-     conn.execute(text('INSERT INTO ProductColor (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
-     conn.execute(text('INSERT INTO ProductSize (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
-     conn.commit()
-     flash('Item added')
-    else:
-        flash('User does not exist')
-        return redirect('/admin_add_products')
+    if not user_exists:
+        conn.execute(text('INSERT INTO User (USER_NAME, NAME) VALUES (:username, :name)'), {'username': created_by, 'name': 'Vendor'})
+        conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': request.form['created_by'], 'category': request.form['category']})
+        conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (LAST_INSERT_ID(), :IMAGE_URL)'), {'IMAGE_URL': request.form['IMAGE_URL']})
+        conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
+        conn.execute(text('INSERT INTO PRODUCT_SIZE (PID, size) VALUES (LAST_INSERT_ID(), :size)'), {'size': request.form['size']})
+        conn.commit()
+        flash('Item added')
     return redirect('/admin_add_products')
 
 
 
-@app.route('/all_accounts', methods=['GET'])
-def all_accounts():
-    return render_template('all_accounts.html')
 
 
 @app.route('/all_accounts', methods=['POST'])
@@ -339,6 +386,7 @@ def search_account():
     conn.commit()
     print(users)
     return render_template('admin.html', users=users)
+  
 
 
 
@@ -348,9 +396,9 @@ def admin_update_product():
     PID = request.form['PID']
     # category = request.form['category']
     conn.execute(text('UPDATE PRODUCT SET TITLE = :title, DESCRIPTION = :description, WARRANTY_PERIOD = :warranty_period, NUMBER_OF_ITEMS = :number_of_items, PRICE = :price, Category = :category WHERE PID = :PID'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'],'category': request.form['category'], 'PID': PID,})
-    conn.execute(text('UPDATE ProductImages SET imagesURL = :imagesURL WHERE PID = :PID'), {'imagesURL': request.form['imagesURL'], 'PID': PID})
-    conn.execute(text('UPDATE ProductColor SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
-    conn.execute(text('UPDATE ProductSize SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_IMGS SET IMAGE_URL = :IMAGE_URL WHERE PID = :PID'), {'IMAGE_URL': request.form['IMAGE_URL'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_COLOR SET color = :color WHERE PID = :PID'), {'color': request.form['color'], 'PID': PID})
+    conn.execute(text('UPDATE PRODUCT_SIZE SET size = :size WHERE PID = :PID'), {'size': request.form['size'], 'PID': PID})
     conn.commit()
     return redirect(url_for('admin_add_products'))
 
@@ -359,10 +407,10 @@ def admin_update_product():
 def admin_delete_product():
     PID = request.form['PID']
     created_by = request.form['vendor_username']
-    conn.execute(text('DELETE FROM ProductImages WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductColor WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM ProductSize WHERE PID = :PID'), {'PID': PID})
-    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID AND ADDED_BY_USERNAME = :username'), {'PID': PID, 'username': created_by})
+    conn.execute(text('DELETE FROM PRODUCT_IMGS WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_COLOR WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT_SIZE WHERE PID = :PID'), {'PID': PID})
+    conn.execute(text('DELETE FROM PRODUCT WHERE PID = :PID AND CREATED_BY = :username'), {'PID': PID, 'username': created_by})
     conn.commit()
     return redirect(url_for('admin_add_products'))
 ## End of admin functions--------------------------------------------------------------------> Kishaun
@@ -376,12 +424,12 @@ def review_get():
 
 @app.route('/review',methods=['POST'])
 def review_post():
-    username = session.get('USER_NAME')  ## This is the username of the person who is logged in
-    rating = request.form['rating']     ## This is the rating that the user gives
-    desc = request.form['desc']        ## This is the description that the user gives   
-    img = request.form['img']     ## This is the image that the user gives
-    Product = request.form['Product']  ## This is the product that the user is reviewing
-    conn.execute(text('INSERT INTO REVIEW (RATING, `DESC`, IMG, REVIEW_USER_NAME,Product) VALUES (:rating, :desc, :img, :username, :Product)'), {'rating': rating, 'desc': desc, 'img': img, 'username': username, 'Product': Product}) ## This is the SQL query that inserts the review into the database
+    username = session['user_id']
+    rating = request.form['rating']
+    desc = request.form['desc']
+    img = request.form['img']
+    Product = request.form['Product']
+    conn.execute(text('INSERT INTO REVIEW (RATING, `DESC`, IMG, REVIEW_USER_NAME, PRODUCT) VALUES (:rating, :desc, :img, :username, :Product)'), {'rating': rating, 'desc': desc, 'img': img, 'username': username, 'Product': Product})
     conn.commit()
     return redirect('/review')
 
@@ -405,84 +453,7 @@ def view_reviews_post():
         reviews = conn.execute(text('SELECT * FROM REVIEW')).fetchall()       ## this gets all reviews
     conn.commit()
     return render_template('view_reviews.html', reviews=reviews)
-## End of review section Kishaun-------------------------------------------------------------------------------------> Kishaun
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## End of review section Kishaun-------------------------------------------------------------------------------------> 
 
 ## Start of complaint section Kishaun-------------------------------------------------------------------------------------> Kishaun
 @app.route('/Customer_create_complaint', methods=['GET'])
@@ -563,6 +534,22 @@ def delete_complaint():
 ## This app route lets the admin delete a complaint on the Admin_view_complaints page
 
 ## End of  Admin complaint section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+
+# ------------------------------------------------ Start of Chat - Vee
+
+
+
+
+
+
+
+
+# ------------------------------------------------ End of Chat ---------------------------------------------------------------
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
