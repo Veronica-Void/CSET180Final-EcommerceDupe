@@ -55,44 +55,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
-</head>
-{% extends 'base.html' %}
-<body>
-    {% block body %}
-    <section class="products_section">
-        <div class="products_container">
-            {% if items %}
-                {% for i in range(items|length) %}
-                    <div class="actual_product" name="item">
-                        {% if imgs %}
-                            {% for img in imgs %}
-                                <img src="{{ imgs[0][1] }}" alt="">
-                            {% endfor %}
-                        {% endif %}
-                        <img src="{{ imgs[0][1] }}" alt="product" class="product_img">
-                        <h3 class="product_name">{{ items[i][1] }}</h3>
-                        <p class="product_desc">{{ items[i][2] }}</p>
-                        <p class="price">${{ items[i][5] }}</p>
-                        <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-        
-        </div>
-
-    </section>
-    {%endblock%}
-
     <script>
-        function addToCart(productId) {
-            // A JS function to do a POST request to Flask /add_to_cart
+        function addToCart(button) {
+            var productId = button.getAttribute('data-product-id');
+            console.log('Adding product to cart:', productId);
             fetch(`/add_to_cart/${productId}`, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productId: productId }),
+                }
             })
             .then(response => {
                 if (response.ok) {
@@ -104,7 +75,34 @@
             .catch(error => console.error('Error adding item to cart:', error));
         }
     </script>
+
+</head>
+{% extends 'base.html' %}
+<body>
+{% block body %}
+<section class="products_section">
+    <div class="products_container">
+        {% if items %}
+            {% for item in items %}
+                <div class="actual_product" name="item">
+                    {% if imgs %}
+                        {% for img in imgs %}
+                            <img src="{{ imgs[0][1] }}" alt="">
+                        {% endfor %}
+                    {% endif %}
+                    <img src="{{ imgs[0][1] }}" alt="product" class="product_img">
+                    <h3 class="product_name">{{ item[1] }}</h3>
+                    <p class="product_desc">{{ item[2] }}</p>
+                    <p class="price">${{ item[5] }}</p>
+                    <button class="add_to" onclick="addToCart(this)" data-product-id="{{ item[0] }}">Add to cart</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
 </body>
 </html>
+
 
 
