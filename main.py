@@ -158,6 +158,7 @@ def all_accounts():
     return render_template('all_accounts.html')
 
 
+# admin views all accounts
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -167,7 +168,8 @@ def search_account():
         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
     conn.commit()
     print(users)
-    return render_template('all_accounts.html', users=users)
+    return render_template('admin.html', users=users)
+  
 
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
@@ -375,18 +377,6 @@ def admin_add_products_post():
 
 
 
-
-@app.route('/all_accounts', methods=['POST'])
-def search_account():
-    acc_type = request.form.get('acc_type')
-    if acc_type == 'all':
-        users = conn.execute(text('SELECT * FROM USER')).fetchall()
-    else:
-        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-    conn.commit()
-    print(users)
-    return render_template('admin.html', users=users)
-  
 
 
 
