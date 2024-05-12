@@ -1,3 +1,92 @@
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    
+    nav {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    nav ul li {
+      display: inline;
+      margin-right: 10px;
+    }
+    
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      padding: 5px;
+    }
+    
+    nav ul li a:hover {
+      background-color: #555;
+    }
+    
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    form {
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    input[type="submit"] {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+
+<!-- <!DOCTYPE html> -->
+<!-- <html>
+<head>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../static/style.css">
+  <title>Title</title>
+</head>
+
+<body> -->
+
   {%extends 'index.html'%}
   {% block body %}
   <nav>
@@ -6,6 +95,16 @@
     </ul>
     
   </nav>
+  <h2>Vendor Add Product</h2>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flash-messages">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
   <h2>Add Product</h2>
   <form action="/add_products" method="POST">
@@ -30,6 +129,15 @@
     <input type="submit" value="Add Product">
   </form>
 
+  <h2>Add More Images</h2>
+  <form action="/add_more_images" method="post">
+    <label for="PID">PID:</label>
+    <input type="text" id="PID" name="PID">
+    <label for="imagesURL">Image URL:</label>
+    <input type="text" id="imagesURL" name="imagesURL">
+    <input type="submit" value="Add Image">
+  </form>
+
   <h2>Delete Product</h2>
   <form action="/delete" method="POST">
     <label for="PID">PID:</label>
@@ -52,7 +160,7 @@
     <label for="number_of_items">Number of Items:</label>
     <input type="text" id="number_of_items" name="number_of_items">
     <label for="price">Price:</label>
-    <input type="text" id="price" name="price">
+    <input type="number" step ='0.01' id="price" name="price">
     <label for="imagesURL">Image URL:</label>
     <input type="text" id="imagesURL" name="imagesURL">
     <label for="color">Color:</label>
