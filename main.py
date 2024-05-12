@@ -180,8 +180,6 @@ def search_account():
     conn.commit()
     print(users)
     return render_template('admin.html', users=users)
-  
-
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -542,6 +540,9 @@ def delete_complaint():
 
 
 # ------------------------------------------------ Start of Chat - Vee
+@app.route('/chat')
+def showChat_page():
+    return render_template ('chat.html')
 
 
 
@@ -549,8 +550,7 @@ def delete_complaint():
 
 
 
-
-# ------------------------------------------------ End of Chat ---------------------------------------------------------------
+# ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 
 
 
