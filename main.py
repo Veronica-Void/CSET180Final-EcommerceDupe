@@ -10,7 +10,7 @@ import uuid
 
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
