@@ -535,6 +535,72 @@ def delete_complaint():
 
 ## End of  Admin complaint section Kishaun-------------------------------------------------------------------------------------> Kishaun
 
+## Start of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+@app.route('/Customer_orders', methods=['GET'])
+def order_get():
+    username = session.get('USER_NAME')
+    orders = conn.execute(text('SELECT * FROM ORDERS WHERE placedByUserName = :username'), {'placeByUserName': username}).fetchall()
+    return render_template('Customer_orders.html' , orders=orders, username=username) 
+
+@app.route('/Customer_orders', methods=['POST'])
+def place_order():
+    username = session.get('USER_NAME')
+    status = status = "Pending"
+    conn.execute(text('INSERT INTO ORDERS (status, placedByUserName) VALUES (:status, :username)'), {'status': status, 'username': username})
+    
+    return render_template('Customer_orders.html' , username=username, status=status)
+
+
+@app.route('/Vendor_view_orders', methods=['GET'])
+def view_orders():
+    return render_template('Vendor_view_orders.html')
+
+
+@app.route('/Vendor_view_orders', methods=['POST'])
+def view_orders_post():
+    status = request.form.get('status')
+    if status:
+        orders = conn.execute(text('SELECT * FROM ORDERS WHERE status = :status'), {'status': status}).fetchall()
+    else:
+        orders = conn.execute(text('SELECT * FROM ORDERS')).fetchall()
+    conn.commit()
+    return render_template('Vendor_view_orders.html', orders=orders)
+
+
+@app.route('/Vendor_approve_orders', methods=['POST'])
+def approve_order_post():
+    username = session.get('USER_NAME')
+    status = request.form['status']
+    conn.execute(text('UPDATE ORDERS SET status = :status WHERE placedByUserName = :username'), {'status': status, 'username': username})
+    conn.commit()
+    return redirect('/Vendor_approve_orders')
+## End of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+
+
+
+# create table Orders(
+# OID INT AUTO_INCREMENT primary key,
+# date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# status varchar(50),
+# placedByUserName varchar(50),
+# foreign key (placedByUserName) REFERENCES USER(USER_NAME)
+# );
+
+@app.route('/Checkout', methods=['GET'])
+def checkout_get():
+    return render_template('Checkout.html')
+
+@app.route('/Checkout', methods=['POST'])
+def checkout_post():
+    username = session.get('USER_NAME')
+    address = request.form['address']
+    payment_method = request.form['payment_method']
+    conn.execute(text('INSERT INTO ORDERS (USER_NAME, ADDRESS, PAYMENT_METHOD) VALUES (:username, :address, :payment_method)'), {'username': username, 'address': address, 'payment_method': payment_method})
+    conn.commit()
+    return redirect('/Customer_orders')
+
 
 # ------------------------------------------------ Start of Chat - Vee
 
