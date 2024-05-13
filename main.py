@@ -288,7 +288,7 @@ def showCart():
         for product_id in product_ids:
             product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
             if product:
-                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0] #NEED TO CHANGE IMAGESURL TO IMAGE_URL, and product_images to product_imgs
+                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0]
                 item_total = product[5] * product[4]
                 cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
                 total += item_total
