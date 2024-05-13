@@ -122,7 +122,7 @@
                         <h3 class="product_name">{{ items[i][1] }}</h3>
                         <p class="product_desc">{{ items[i][2] }}</p>
                         <p class="price">${{ items[i][5] }}</p>
-                        <button class="add_to" onclick="addToCart(this)" data-product-id="{{ item[0] }}">Add to cart</button>
+                        <button class="add_to" onclick="addToCart(this)" data-product-id="{{ items[i][0] }}">Add to cart</button>
                     </div>
                 {% endfor %}
             {% endif %}
