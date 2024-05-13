@@ -6,10 +6,13 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
+import uuid
+import logging
+
+logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 
-c_str = "mysql://root:Applepine13.!@localhost/ECOM"
-# c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -73,6 +76,14 @@ def registerUser():
 
 # ------------------------------------------------ End of Register ------------------------------------------------------------
 
+def generate_unique_cart_id():
+    return str(uuid.uuid4())
+
+def create_cart_for_user(username):
+    cart_id = generate_unique_cart_id()
+    conn.execute(text("INSERT INTO CART (CART_ID, CREATED_BY) VALUES (:cart_id, :username)"), {'cart_id': cart_id, 'username': username})
+    return cart_id
+
 
 # ------------------------------------------------ Start of Login - Jaiden
 @app.route('/login', methods=['GET'])
@@ -94,21 +105,23 @@ def loginUser():
 
         account = conn.execute(text("SELECT * FROM User WHERE USER_NAME = :identifier OR EMAIL = :identifier"), {'identifier': username_or_email})
         user_data = account.fetchone()
-         
-        if user_data[3] == hashed_password:
-            session['loggedin'] = True
-            session['USER_NAME'] = user_data[0]
-            session['NAME'] = f"{user_data[1]}"
-            if user_data[4] == 'Administrator':
-                return redirect(url_for('showAdmin'))
-            elif user_data[4] == 'Vendor':
-                return redirect(url_for('showVendor'))
+        if user_data:     
+            if user_data[3] == hashed_password:
+                session['loggedin'] = True
+                session['USER_NAME'] = user_data[0]
+                session['NAME'] = f"{user_data[1]}"
+                cart_id = create_cart_for_user(user_data[0]) 
+                session['cart_id'] = cart_id
+                if user_data[4] == 'Administrator':
+                     redirect(url_for('showAdmin'))
+                elif user_data[4] == 'Vendor':
+                    return redirect(url_for('showVendor'))
+                else:
+                    return redirect(url_for('home'))
             else:
-                return redirect(url_for('home'))
+                msg = 'Wrong username or password'
         else:
-            msg = 'Wrong username or password'
-    else:
-        msg = 'User not found'
+            msg = 'User not found'
 
     return render_template('/login.html', msg=msg)
 
@@ -158,6 +171,20 @@ def all_accounts():
     return render_template('all_accounts.html')
 
 
+
+# @app.route('/all_accounts', methods=['POST'])
+# def search_account():
+#     acc_type = request.form.get('acc_type')
+#     if acc_type == 'all':
+#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
+#     else:
+#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+#     conn.commit()
+#     print(users)
+#     return render_template('all_accounts.html', users=users)
+
+# admin views all accounts
+
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -167,7 +194,8 @@ def search_account():
         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
     conn.commit()
     print(users)
-    return render_template('all_accounts.html', users=users)
+    return render_template('admin.html', users=users)
+
 
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
@@ -225,7 +253,6 @@ def showProduct_page():
     return render_template('/view_products.html', items=items, imgs=imgs)
 
 
-
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
  
 
@@ -235,23 +262,32 @@ def showProduct_page():
 
 # ------------------------------------------------ Start of checkout - Jaiden
 
-@app.route('/products')
-def show_products():
-    products = [
-        {'id': 1, '1': 'Product 1'},
-        {'id': 2, '2': 'Product 2'},
-    ]
-    return render_template('view_products.html', products=products)
 
 # Add to Cart - Jaiden
-@app.route('/add_to_cart/<int:product_id>')
+@app.route('/add_to_cart/<int:product_id>', methods=['GET'])
 def add_to_cart(product_id):
-    if 'cart' not in session:
-        session['cart'] = []
+    try:
+        cart_id = session.get('cart_id')
+        if not cart_id:
+            cart_id = generate_unique_cart_id()
+            session['cart_id'] = cart_id
+        
+        conn.execute(
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            {'pid': product_id, 'cart_id': cart_id}
+        )
+        flash('Item added to cart!')
+        return redirect(url_for('showProduct_page'))
+    
+    except ValueError:
+        return "Invalid product ID", 400
+    
+    except Exception as e:
+        print(f"Failed to add item to cart: {str(e)}")
+        return "Failed to add item to cart", 500
 
-    session['cart'].append(product_id)
-    flash('Item added to cart!')
-    return redirect(url_for('showProducts'))
+
+
 
 
 # Remove from Cart - Jaiden
@@ -268,16 +304,15 @@ def remove_from_cart(product_id):
 def showCart():
     cart_items = []
     total = 0
-    if 'cart' in session:
-        product_ids = session['cart']
-        for product_id in product_ids:
-            product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
-            if product:
-                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0] #NEED TO CHANGE IMAGESURL TO IMAGE_URL, and product_images to product_imgs
-                item_total = product[5] * product[4]
-                cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
-                total += item_total
+    cart_id = session.get('cart_id')
+    if cart_id:
+        cart_products = conn.execute(text("SELECT p.* FROM PRODUCT p INNER JOIN CART_HAS_PRODUCT cp ON p.PID = cp.PID WHERE cp.CART_ID = :cart_id"), {'cart_id': cart_id}).fetchall()
+        for product in cart_products:
+            item_total = product[5] * product[4]
+            cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'item_total': item_total})
+            total += item_total
     return render_template('cart.html', cart_items=cart_items, total=total)
+
 
 
 
@@ -376,6 +411,7 @@ def admin_add_products_post():
 
 
 
+
 # @app.route('/all_accounts', methods=['POST'])
 # def search_account():
 #     acc_type = request.form.get('acc_type')
@@ -387,6 +423,7 @@ def admin_add_products_post():
 #     print(users)
 #     return render_template('admin.html', users=users)
   
+
 
 
 
@@ -539,70 +576,6 @@ def delete_complaint():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/Customer_orders', methods=['GET'])
 def order_get():
     username = session.get('USER_NAME')
@@ -667,6 +640,9 @@ def checkout_post():
 
 
 # ------------------------------------------------ Start of Chat - Vee
+@app.route('/chat')
+def showChat_page():
+    return render_template ('chat.html')
 
 
 
@@ -674,8 +650,7 @@ def checkout_post():
 
 
 
-
-# ------------------------------------------------ End of Chat ---------------------------------------------------------------
+# ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 
 
 

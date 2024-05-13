@@ -1,0 +1,160 @@
+<style>
+.chat_container{
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+.chat_txt{
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+.customer_container{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-items: left;
+
+    height: fit-content;
+
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.customer_img{
+    margin: none;
+    width: 100px;
+    height: 100px;
+    border: 5px solid;
+    border-radius: 60%;
+    border-color: rgb(120, 255, 212);
+}
+
+
+.vendor_container{
+    display: flex;
+    flex-direction: row;
+    justify-items: left;
+    align-items: center;
+
+    height: fit-content;
+
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.vendor_img{
+    margin: none;
+    width: 100px;
+    height: 100px;
+    border: 5px solid;
+    border-radius: 60%;
+    border-color: rgb(0, 0, 0);
+}
+
+
+.admin_container{
+    display: flex;
+    flex-direction: row;
+    justify-items: left;
+    align-items: center;
+}
+
+.admin_img{
+    border-radius: 50px;
+}
+
+
+.txt_box{
+    border: 1px solid;
+    border-color: chocolate;
+    border-radius: 50px;
+    /* width: fit-content; */
+}
+
+.txt_input{
+    float: inline-start;
+    border-radius: 50px;
+}
+
+.txt_btn{
+    float: right;
+}
+
+
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <!-- needs jinja for chat boxes and chat messages -->
+<!-- chat box section -->
+<div class="chat_container">
+    <div class="customer_container">
+        <img src="../static/profilePhoto.jpg" alt="customer Image" class="customer_img">
+        <p class="chat_txt">Hello, I have a question!</p>
+        <span class="time"></span>
+
+    </div>
+
+
+
+    <div class="vendor_container">
+        <img src="../static/adminpfp.webp" alt="Vendor Image" class="vendor_img">
+        <p class="chat_txt">Hi {{ session['USER_NAME'] }}, you are now speaking with a Vendor. How can I assist you today?</p>
+        <span class="time"></span>
+
+
+    </div>
+
+    <div class="txt_box">
+        <input type="text" placeholder="message" class="txt_input"> 
+        <button class="txt_btn">Send</button>
+    </div>
+
+
+    <!-- <div class="admin_container">
+        <img src="../static/bluedot.jpg" alt="Admin Image" class="admin_img">
+        <p class="chat_txt">Hi (username), Admin here! What can I do for you today?</p>
+        <span class="time"></span>
+
+
+    </div> -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- chat history section  -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
