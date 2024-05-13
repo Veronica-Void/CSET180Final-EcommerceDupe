@@ -487,7 +487,7 @@ def create_complaint_post():
     
     conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
                      {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName}) ## This is the SQL query that inserts the complaint into the database
-    conn.execute(text('INSERT INTO COMPLAINTIMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
+    conn.execute(text('INSERT INTO COMPLAINT_IMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
     conn.commit()
     return redirect('/Customer_create_complaint')
     ## This app route lets the Customer create a complaint and add it to the database on the Customer_create_complaint page
@@ -530,7 +530,7 @@ def update_complaint():
 @app.route('/delete_complaint', methods=['POST'])
 def delete_complaint():
     complaint_id = request.form['complaint_id']
-    conn.execute(text('DELETE FROM COMPLAINTIMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
+    conn.execute(text('DELETE FROM COMPLAINT_IMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
     conn.execute(text('DELETE FROM COMPLAINT WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the complaint from the database based on the complaint id
     conn.commit()
     return redirect('/Admin_view_complaints')
@@ -540,9 +540,23 @@ def delete_complaint():
 
 
 # ------------------------------------------------ Start of Chat - Vee
-@app.route('/chat')
+
+# displays the chat page
+@app.route('/chat', methods=['GET'])
 def showChat_page():
     return render_template ('chat.html')
+
+
+# chat functionality
+@app.route('/chat', methods=['POST', 'GET'])
+def chat_function():
+    msg_input = request.form.get('TEXT_MESSAGE')
+
+    if msg_input != '':
+        conn.execute(text(f"INSERT INTO MESSAGE (MESSAGE_ID, TEXT_MESSAGE, MESSAGE_IMAGE_URL, WRITER_USER_NAME, RECIEVER_USER_NAME) VALUES ('', \'{msg_input}\', 'MESSAGE_IMAGE_URL', 'WRITER_USER_NAME', 'RECIEVER_USER_NAME') "))
+        return redirect(url_for('showChat_page'))
+    else:
+        print('This is not working.')
 
 
 
