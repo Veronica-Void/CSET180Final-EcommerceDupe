@@ -297,7 +297,7 @@ def add_products():
 @app.route('/add_products', methods=['POST'])
 def add_products_post():
     created_by = session.get('USER_NAME')
-    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, CREATED_BY, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
+    conn.execute(text('INSERT INTO PRODUCT (TITLE, DESCRIPTION, WARRANTY_PERIOD, NUMBER_OF_ITEMS, PRICE, ADDED_BY_USERNAME, CATEGORY) VALUES (:title, :description, :warranty_period, :number_of_items, :price, :created_by, :category)'), {'title': request.form['title'], 'description': request.form['description'], 'warranty_period': request.form['warranty_period'], 'number_of_items': request.form['number_of_items'], 'price': request.form['price'], 'created_by': created_by, 'category': request.form['category']})
     # Grabs the image from the add_product form and adds it to the database 
     conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (LAST_INSERT_ID(), :IMAGE_URL)'), {'IMAGE_URL': request.form['IMAGE_URL']})
     conn.execute(text('INSERT INTO PRODUCT_COLOR (PID, color) VALUES (LAST_INSERT_ID(), :color)'), {'color': request.form['color']})
@@ -311,7 +311,7 @@ def add_products_post():
 def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID,IMAGE_URL ) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
     conn.commit()  
     flash('Image added')
     return redirect(url_for('add_products'))
@@ -536,10 +536,6 @@ def delete_complaint():
 ## End of  Admin complaint section Kishaun-------------------------------------------------------------------------------------> Kishaun
 
 ## Start of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
-
-
-
-
 
 
 

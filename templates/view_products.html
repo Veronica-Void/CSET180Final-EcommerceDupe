@@ -74,6 +74,26 @@
 
 
 </style>
+<script>
+    function addToCart(productId) {
+        // A JS function to do a POST request to Flask /add_to_cart
+        fetch(`/add_to_cart/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: productId }),
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Item added to cart');
+            } else {
+                alert('Failed to add item');
+            }
+        })
+        .catch(error => console.error('Error adding item to cart:', error));
+    }
+</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -112,27 +132,6 @@
 
     </section>
     {%endblock%}
-
-    <script>
-        function addToCart(productId) {
-            // A JS function to do a POST request to Flask /add_to_cart
-            fetch(`/add_to_cart/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productId: productId }),
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Item added to cart');
-                } else {
-                    alert('Failed to add item');
-                }
-            })
-            .catch(error => console.error('Error adding item to cart:', error));
-        }
-    </script>
 </body>
 </html>
 
