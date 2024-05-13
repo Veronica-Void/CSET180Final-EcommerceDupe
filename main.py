@@ -7,8 +7,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 import uuid
+import logging
 
-
+logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 c_str = "mysql://root:cyber241@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
@@ -108,7 +109,7 @@ def loginUser():
                 session['loggedin'] = True
                 session['USER_NAME'] = user_data[0]
                 session['NAME'] = f"{user_data[1]}"
-                cart_id = create_cart_for_user(user_data[0])  # Assuming user_data[0] is the USER_NAME or user identifier
+                cart_id = create_cart_for_user(user_data[0]) 
                 session['cart_id'] = cart_id
                 if user_data[4] == 'Administrator':
                      redirect(url_for('showAdmin'))
@@ -169,7 +170,20 @@ def all_accounts():
     return render_template('all_accounts.html')
 
 
+
+# @app.route('/all_accounts', methods=['POST'])
+# def search_account():
+#     acc_type = request.form.get('acc_type')
+#     if acc_type == 'all':
+#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
+#     else:
+#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+#     conn.commit()
+#     print(users)
+#     return render_template('all_accounts.html', users=users)
+
 # admin views all accounts
+
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -180,6 +194,8 @@ def search_account():
     conn.commit()
     print(users)
     return render_template('admin.html', users=users)
+
+
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -250,13 +266,15 @@ def showProduct_page():
 @app.route('/add_to_cart/<int:product_id>', methods=['GET'])
 def add_to_cart(product_id):
     try:
-        product_id = int(product_id)
         cart_id = session.get('cart_id')
         if not cart_id:
-            cart_id = generate_unique_cart_id()  # Function to generate a unique cart ID
+            cart_id = generate_unique_cart_id()
             session['cart_id'] = cart_id
         
-        conn.execute(text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), {'pid': product_id, 'cart_id': cart_id})
+        conn.execute(
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            {'pid': product_id, 'cart_id': cart_id}
+        )
         flash('Item added to cart!')
         return redirect(url_for('showProduct_page'))
     
@@ -264,7 +282,9 @@ def add_to_cart(product_id):
         return "Invalid product ID", 400
     
     except Exception as e:
-        return f"Failed to add item to cart: {str(e)}", 500
+        print(f"Failed to add item to cart: {str(e)}")
+        return "Failed to add item to cart", 500
+
 
 
 
@@ -283,16 +303,15 @@ def remove_from_cart(product_id):
 def showCart():
     cart_items = []
     total = 0
-    if 'cart' in session:
-        product_ids = session['cart']
-        for product_id in product_ids:
-            product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
-            if product:
-                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0] #NEED TO CHANGE IMAGESURL TO IMAGE_URL, and product_images to product_imgs
-                item_total = product[5] * product[4]
-                cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
-                total += item_total
+    cart_id = session.get('cart_id')
+    if cart_id:
+        cart_products = conn.execute(text("SELECT p.* FROM PRODUCT p INNER JOIN CART_HAS_PRODUCT cp ON p.PID = cp.PID WHERE cp.CART_ID = :cart_id"), {'cart_id': cart_id}).fetchall()
+        for product in cart_products:
+            item_total = product[5] * product[4]
+            cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'item_total': item_total})
+            total += item_total
     return render_template('cart.html', cart_items=cart_items, total=total)
+
 
 
 
@@ -386,6 +405,7 @@ def admin_add_products_post():
         conn.commit()
         flash('Item added')
     return redirect('/admin_add_products')
+
 
 
 
