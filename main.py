@@ -8,8 +8,8 @@ from sqlalchemy.orm import sessionmaker
 import hashlib
 
 
-
-c_str = "mysql://root:MySQL8090@localhost/ecomm"
+c_str = "mysql://root:Applepine13.!@localhost/ECOM"
+# c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -376,16 +376,16 @@ def admin_add_products_post():
 
 
 
-@app.route('/all_accounts', methods=['POST'])
-def search_account():
-    acc_type = request.form.get('acc_type')
-    if acc_type == 'all':
-        users = conn.execute(text('SELECT * FROM USER')).fetchall()
-    else:
-        users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-    conn.commit()
-    print(users)
-    return render_template('admin.html', users=users)
+# @app.route('/all_accounts', methods=['POST'])
+# def search_account():
+#     acc_type = request.form.get('acc_type')
+#     if acc_type == 'all':
+#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
+#     else:
+#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+#     conn.commit()
+#     print(users)
+#     return render_template('admin.html', users=users)
   
 
 
@@ -537,11 +537,82 @@ def delete_complaint():
 
 ## Start of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/Customer_orders', methods=['GET'])
 def order_get():
     username = session.get('USER_NAME')
-    orders = conn.execute(text('SELECT * FROM ORDERS WHERE placedByUserName = :username'), {'placeByUserName': username}).fetchall()
+    orders = conn.execute(text('SELECT * FROM ORDERS WHERE placedByUserName = :username'), {'username': username}).fetchall()
     return render_template('Customer_orders.html' , orders=orders, username=username) 
+
 
 @app.route('/Customer_orders', methods=['POST'])
 def place_order():
@@ -570,23 +641,20 @@ def view_orders_post():
 
 @app.route('/Vendor_approve_orders', methods=['POST'])
 def approve_order_post():
-    username = session.get('USER_NAME')
+    OrderID = request.form['order_id']
     status = request.form['status']
-    conn.execute(text('UPDATE ORDERS SET status = :status WHERE placedByUserName = :username'), {'status': status, 'username': username})
+    conn.execute(text('UPDATE ORDERS SET status = :status WHERE OID = :OrderID'), {'status': status, 'OrderID': OrderID})
     conn.commit()
-    return redirect('/Vendor_approve_orders')
+    return redirect('/Vendor_view_orders')
+
+
+@app.route('/Vendor_delete_orders', methods=['POST'])
+def delete_order():
+    OrderID = request.form['order_id']
+    conn.execute(text('DELETE FROM ORDERS WHERE OID = :OrderID'), {'OrderID': OrderID})
+    conn.commit()
+    return redirect('/Vendor_view_orders')
 ## End of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
-
-
-
-
-# create table Orders(
-# OID INT AUTO_INCREMENT primary key,
-# date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# status varchar(50),
-# placedByUserName varchar(50),
-# foreign key (placedByUserName) REFERENCES USER(USER_NAME)
-# );
 
 @app.route('/Checkout', methods=['GET'])
 def checkout_get():

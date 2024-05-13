@@ -1,0 +1,116 @@
+{% extends 'vendor.html' %}
+{% block body %}
+<h1>Approve Orders</h1>
+<form action="/Vendor_view_orders" method="POST">
+    <label for="status">Filter by Status:</label>
+    <select name="status" id="status">
+        <option value="">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="handed to delivery partner ">handed to delivery partner</option>
+        <option value="Shipped">Shipped</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <!-- <th>Price</th> -->
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.OID }}</td>
+            <!-- <td>{{ order.price }}</td> -->
+            <td>{{ order.date  }}</td>
+            <td>{{ order.placedByUserName }}</td>
+            <td>{{ order.status  }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<!-- </tr><h2>Update Orders</h2>
+<form action="/" method="POST">
+    <label for="complaint_id">Complaint ID:</label>
+    <input type="text" id="complaint_id" name="complaint_id" required><br><br>
+    <label for="status">Status:</label>
+    <select name="status" id="status">
+        <option value="Approved">Approved</option>
+        <option value="Denied">Denied</option>
+    </select><br><br>
+    <input type="submit" value="Update">
+</form> -->
+<h2>Update Orders</h2>
+<form action="/Vendor_approve_orders" method="POST">
+    <label for="order_id">Order ID:</label>
+    <input type="text" id="order_id" name="order_id" required><br><br>
+    <label for="status">Status:</label>
+    <select name="status" id="status">
+        <option value="Confirmed">Confirmed</option>
+        <option value="handed to delivery partner">handed to delivery partner</option>
+        <option value="Shipped">Shipped</option>
+    </select><br><br>
+    <input type="submit" value="Update">
+</form>
+</table>
+</tr><h2>Delete Orders</h2>
+<form action="/Vendor_delete_orders" method="POST">
+    <label for="order_id">Order ID:</label>
+    <input type="text" id="order_id" name="order_id" required><br><br>
+    <input type="submit" value="Delete">
+</form>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+    th, td {
+        text-align: left;
+        padding: 16px;
+    }
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    input[type=submit] {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    form {
+        max-width: 400px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    
+</style>
+
+
+
+</body>
+{% endblock %}
