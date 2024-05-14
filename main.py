@@ -548,21 +548,17 @@ def showChat_page():
 
 
 # chat functionality
-@app.route('/chat', methods=['POST', 'GET'])
+@app.route('/chat', methods=['POST'])
 def chat_function():
     msg_input = request.form.get('TEXT_MESSAGE')
+    msg_images = request.form.get('MESSAGE_IMAGE_URL')
 
     if msg_input != '':
-        conn.execute(text(f"INSERT INTO MESSAGE (MESSAGE_ID, TEXT_MESSAGE, MESSAGE_IMAGE_URL, WRITER_USER_NAME, RECIEVER_USER_NAME) VALUES ('', \'{msg_input}\', 'MESSAGE_IMAGE_URL', 'WRITER_USER_NAME', 'RECIEVER_USER_NAME') "))
+        conn.execute(text(f"INSERT INTO MESSAGE (TEXT_MESSAGE, MESSAGE_IMAGE_URL) VALUES (\'{msg_input}\', \'{msg_images}\') "))
+        conn.commit()
         return redirect(url_for('showChat_page'))
     else:
         print('This is not working.')
-
-
-
-
-
-
 
 # ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 

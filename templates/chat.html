@@ -101,10 +101,10 @@
 
 </div>
 <form action="/chat" method="POST">
-    
-    <textarea name="TEXT_MESSAGE" class="txt_box" aria-placeholder="Enter Messages here..."></textarea>
+    <input type="text" name="TEXT_MESSAGE" aria-placeholder="Enter Messages here..." class="txt_box">
+    <input type="file" name="MESSAGE_IMAGE_URL" class="msg_img">
     <button name="SEND_BTN">Send</button>
-    <button name="EXIT_CHAT">Exit</button>
+    <button name="EXIT_CHAT"><a href="index.html">Exit</a></button>
 </form>
 
 </body>
