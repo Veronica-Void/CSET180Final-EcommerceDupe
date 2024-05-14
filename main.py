@@ -346,7 +346,7 @@ def add_products_post():
 def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID,IMAGE_URL ) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
     conn.commit()  
     flash('Image added')
     return redirect(url_for('add_products'))
