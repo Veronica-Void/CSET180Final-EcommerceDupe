@@ -259,7 +259,7 @@ def add_to_cart(product_id):
             session['cart_id'] = cart_id
         
         conn.execute(
-            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id);"), 
             {'pid': product_id, 'cart_id': cart_id}
         )
         flash('Item added to cart!')
