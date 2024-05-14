@@ -1,5 +1,4 @@
 <style>
-
     .products_section{
         display: flex;
         justify-content: space-between;
@@ -53,6 +52,7 @@
         overflow-x: scroll;
         overflow-y: hidden;
         width: 250px;
+        height: fit-content;
     }
     .mini_flexbox::-webkit-scrollbar{
         display: none;
@@ -71,8 +71,6 @@
             width: 100%;
         }
     }
-
-
 </style>
 
 <!DOCTYPE html>
@@ -112,13 +110,14 @@
                     <div class="actual_product" name="item">
                         {% if imgs %}
                         <img src="{{ imgs[i][1] }}" alt="product" class="product_img">
-                        <div class="mini_flexbox">
-                            {% for img in imgs %}
-                                <img src="{{ img[1] }}" alt="product" class="miniIMG">
-                            {% endfor %}
-                        </div>
                         {% endif %}
-
+                        <div class="mini_flexbox">
+                            {% if specific_imgs %}
+                                {% for x in range(specific_imgs|length) %}
+                                    <img src="{{ specific_imgs[x][1] }}" alt="product" class="miniIMG">
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                         <h3 class="product_name">{{ items[i][1] }}</h3>
                         <p class="product_desc">{{ items[i][2] }}</p>
                         <p class="price">${{ items[i][5] }}</p>

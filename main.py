@@ -170,7 +170,7 @@ def account_info():
 def all_accounts():
     return render_template('all_accounts.html')
 
-
+# admin searches all accounts
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -229,14 +229,16 @@ def showVendor_Products():
 def showProduct_page():
     # joining together the product table and product image table
     items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
-
-    # grabbing images from the db
+    # grabbing images from the form and db
+    username = str(session.get('USER_NAME'))
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+    specific_imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS pic INNER JOIN PRODUCT prod ON (pic.PID=prod.PID)')).all()
+
 
     # just checking to see if it's working in the terminal
     print(len(items))
 
-    return render_template('/view_products.html', items=items, imgs=imgs)
+    return render_template('/view_products.html', items=items, imgs=imgs, specific_imgs=specific_imgs)
 
 
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
@@ -333,7 +335,7 @@ def add_products_post():
 def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
-    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID,IMAGE_URL ) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
     conn.commit()  
     flash('Image added')
     return redirect(url_for('add_products'))
@@ -393,15 +395,6 @@ def admin_add_products_post():
         conn.commit()
         flash('Item added')
     return redirect('/admin_add_products')
-
-
-
-
-
-
-
-  
-
 
 
 
