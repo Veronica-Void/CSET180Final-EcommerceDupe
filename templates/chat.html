@@ -70,7 +70,7 @@
 .txt_box{
     border: 1px solid;
     border-color: chocolate;
-    border-radius: 50px;
+    border-radius: 40px;
     /* width: fit-content; */
 }
 
@@ -93,68 +93,19 @@
     <title>Chat</title>
 </head>
 <body>
-    <!-- needs jinja for chat boxes and chat messages -->
+    <!-- needs jinja for specific chat boxes and chat messages -->
+
+
 <!-- chat box section -->
 <div class="chat_container">
-    <div class="customer_container">
-        <img src="../static/profilePhoto.jpg" alt="customer Image" class="customer_img">
-        <p class="chat_txt">Hello, I have a question!</p>
-        <span class="time"></span>
 
-    </div>
-
-
-
-    <div class="vendor_container">
-        <img src="../static/adminpfp.webp" alt="Vendor Image" class="vendor_img">
-        <p class="chat_txt">Hi {{ session['USER_NAME'] }}, you are now speaking with a Vendor. How can I assist you today?</p>
-        <span class="time"></span>
-
-
-    </div>
-
-    <div class="txt_box">
-        <input type="text" placeholder="message" class="txt_input"> 
-        <button class="txt_btn">Send</button>
-    </div>
-
-
-    <!-- <div class="admin_container">
-        <img src="../static/bluedot.jpg" alt="Admin Image" class="admin_img">
-        <p class="chat_txt">Hi (username), Admin here! What can I do for you today?</p>
-        <span class="time"></span>
-
-
-    </div> -->
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- chat history section  -->
-
-
-
-
-
-
-
-
-
-
-
-
-
+<form action="/chat" method="POST">
+    <input type="text" name="TEXT_MESSAGE" aria-placeholder="Enter Messages here..." class="txt_box">
+    <input type="file" name="MESSAGE_IMAGE_URL" class="msg_img">
+    <button name="SEND_BTN">Send</button>
+    <button name="EXIT_CHAT"><a href="index.html">Exit</a></button>
+</form>
 
 </body>
 </html>
