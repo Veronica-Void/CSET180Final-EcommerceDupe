@@ -11,22 +11,22 @@
     <header>
         <div class="navBar">
             <div class="innerNavBar">
-
                 <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
-
                 <ul class="bar">
                     <li><a href="/">Home Page</a></li>
                     <li><a href="/my_account">My Account</a></li>
-                    <li><a href="/view_products">Shop</a></li> <!--this page will display all of the products-->
-                    <li><a href="/register">Sign Up</a></li> <!--this page is for sign up-->
+                    <li><a href="/view_products">Shop</a></li> 
+                    <li><a href="/register">Sign Up</a></li> 
                     <li><a href="/login">Login</a></li>
                 </ul>
-                <button class="barItem input" style="margin-left:10px;">
+                <p class="cart"><a href="cart">Cart</a></p>
+                <button class="barItem input">
                     <a href="/logout" class="btn">Logout</a>
                 </button>
-            </div> 
+            </div>
         </div>
     </header>
+    
     
     <div class="content">
         {% block body %}

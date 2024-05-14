@@ -170,10 +170,7 @@ def account_info():
 def all_accounts():
     return render_template('all_accounts.html')
 
-
-
 # admin searches all accounts
-
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -264,7 +261,7 @@ def add_to_cart(product_id):
             session['cart_id'] = cart_id
         
         conn.execute(
-            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id);"), 
             {'pid': product_id, 'cart_id': cart_id}
         )
         flash('Item added to cart!')
