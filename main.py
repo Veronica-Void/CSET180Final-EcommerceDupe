@@ -7,7 +7,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import hashlib
 import uuid
+import logging
 
+logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 
 c_str = "mysql://root:MySQL8090@localhost/ecomm"
@@ -108,7 +110,7 @@ def loginUser():
                 session['loggedin'] = True
                 session['USER_NAME'] = user_data[0]
                 session['NAME'] = f"{user_data[1]}"
-                cart_id = create_cart_for_user(user_data[0])  # Assuming user_data[0] is the USER_NAME or user identifier
+                cart_id = create_cart_for_user(user_data[0]) 
                 session['cart_id'] = cart_id
                 if user_data[4] == 'Administrator':
                      redirect(url_for('showAdmin'))
@@ -169,7 +171,20 @@ def all_accounts():
     return render_template('all_accounts.html')
 
 
+
+# @app.route('/all_accounts', methods=['POST'])
+# def search_account():
+#     acc_type = request.form.get('acc_type')
+#     if acc_type == 'all':
+#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
+#     else:
+#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+#     conn.commit()
+#     print(users)
+#     return render_template('all_accounts.html', users=users)
+
 # admin views all accounts
+
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -180,6 +195,8 @@ def search_account():
     conn.commit()
     print(users)
     return render_template('admin.html', users=users)
+
+
 
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
@@ -250,13 +267,15 @@ def showProduct_page():
 @app.route('/add_to_cart/<int:product_id>', methods=['GET'])
 def add_to_cart(product_id):
     try:
-        product_id = int(product_id)
         cart_id = session.get('cart_id')
         if not cart_id:
-            cart_id = generate_unique_cart_id()  # Function to generate a unique cart ID
+            cart_id = generate_unique_cart_id()
             session['cart_id'] = cart_id
         
-        conn.execute(text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), {'pid': product_id, 'cart_id': cart_id})
+        conn.execute(
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            {'pid': product_id, 'cart_id': cart_id}
+        )
         flash('Item added to cart!')
         return redirect(url_for('showProduct_page'))
     
@@ -264,7 +283,9 @@ def add_to_cart(product_id):
         return "Invalid product ID", 400
     
     except Exception as e:
-        return f"Failed to add item to cart: {str(e)}", 500
+        print(f"Failed to add item to cart: {str(e)}")
+        return "Failed to add item to cart", 500
+
 
 
 
@@ -283,16 +304,16 @@ def remove_from_cart(product_id):
 def showCart():
     cart_items = []
     total = 0
-    if 'cart' in session:
-        product_ids = session['cart']
-        for product_id in product_ids:
-            product = conn.execute(text("SELECT * FROM PRODUCT WHERE PID = :pid"), {'pid': product_id}).fetchone()
-            if product:
-                image_url = conn.execute(text("SELECT IMAGE_URL FROM PRODUCT_IMGS WHERE PID = :pid"), {'pid': product_id}).fetchone()[0]
-                item_total = product[5] * product[4]
-                cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'image_url': image_url, 'item_total': item_total})
-                total += item_total
+    cart_id = session.get('cart_id')
+    if cart_id:
+        cart_products = conn.execute(text("SELECT p.* FROM PRODUCT p INNER JOIN CART_HAS_PRODUCT cp ON p.PID = cp.PID WHERE cp.CART_ID = :cart_id"), {'cart_id': cart_id}).fetchall()
+        for product in cart_products:
+            item_total = product[5] * product[4]
+            cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'item_total': item_total})
+            total += item_total
+
     return render_template('cart.html', cart_items=cart_items, total=total)
+
 
 
 
@@ -326,7 +347,7 @@ def add_products_post():
 def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
-    conn.execute(text('INSERT INTO ProductImages (PID, imagesURL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID,IMAGE_URL ) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
     conn.commit()  
     flash('Image added')
     return redirect(url_for('add_products'))
@@ -389,6 +410,20 @@ def admin_add_products_post():
 
 
 
+
+
+
+# @app.route('/all_accounts', methods=['POST'])
+# def search_account():
+#     acc_type = request.form.get('acc_type')
+#     if acc_type == 'all':
+#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
+#     else:
+#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
+#     conn.commit()
+#     print(users)
+#     return render_template('admin.html', users=users)
+  
 
 
 
@@ -537,6 +572,71 @@ def delete_complaint():
 ## This app route lets the admin delete a complaint on the Admin_view_complaints page
 
 ## End of  Admin complaint section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+## Start of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+
+@app.route('/Customer_orders', methods=['GET'])
+def order_get():
+    username = session.get('USER_NAME')
+    orders = conn.execute(text('SELECT * FROM ORDERS WHERE placedByUserName = :username'), {'username': username}).fetchall()
+    return render_template('Customer_orders.html' , orders=orders, username=username) 
+
+
+@app.route('/Customer_orders', methods=['POST'])
+def place_order():
+    username = session.get('USER_NAME')
+    status = status = "Pending"
+    conn.execute(text('INSERT INTO ORDERS (status, placedByUserName) VALUES (:status, :username)'), {'status': status, 'username': username})
+    
+    return render_template('Customer_orders.html' , username=username, status=status)
+
+
+@app.route('/Vendor_view_orders', methods=['GET'])
+def view_orders():
+    return render_template('Vendor_view_orders.html')
+
+
+@app.route('/Vendor_view_orders', methods=['POST'])
+def view_orders_post():
+    status = request.form.get('status')
+    if status:
+        orders = conn.execute(text('SELECT * FROM ORDERS WHERE status = :status'), {'status': status}).fetchall()
+    else:
+        orders = conn.execute(text('SELECT * FROM ORDERS')).fetchall()
+    conn.commit()
+    return render_template('Vendor_view_orders.html', orders=orders)
+
+
+@app.route('/Vendor_approve_orders', methods=['POST'])
+def approve_order_post():
+    OrderID = request.form['order_id']
+    status = request.form['status']
+    conn.execute(text('UPDATE ORDERS SET status = :status WHERE OID = :OrderID'), {'status': status, 'OrderID': OrderID})
+    conn.commit()
+    return redirect('/Vendor_view_orders')
+
+
+@app.route('/Vendor_delete_orders', methods=['POST'])
+def delete_order():
+    OrderID = request.form['order_id']
+    conn.execute(text('DELETE FROM ORDERS WHERE OID = :OrderID'), {'OrderID': OrderID})
+    conn.commit()
+    return redirect('/Vendor_view_orders')
+## End of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
+
+@app.route('/Checkout', methods=['GET'])
+def checkout_get():
+    return render_template('Checkout.html')
+
+@app.route('/Checkout', methods=['POST'])
+def checkout_post():
+    username = session.get('USER_NAME')
+    address = request.form['address']
+    payment_method = request.form['payment_method']
+    conn.execute(text('INSERT INTO ORDERS (USER_NAME, ADDRESS, PAYMENT_METHOD) VALUES (:username, :address, :payment_method)'), {'username': username, 'address': address, 'payment_method': payment_method})
+    conn.commit()
+    return redirect('/Customer_orders')
 
 
 # ------------------------------------------------ Start of Chat - Vee
