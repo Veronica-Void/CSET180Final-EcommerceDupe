@@ -170,6 +170,7 @@ def all_accounts():
     return render_template('all_accounts.html')
 
 
+
 # @app.route('/all_accounts', methods=['POST'])
 # def search_account():
 #     acc_type = request.form.get('acc_type')
@@ -181,6 +182,8 @@ def all_accounts():
 #     print(users)
 #     return render_template('all_accounts.html', users=users)
 
+# admin views all accounts
+
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -191,7 +194,9 @@ def search_account():
     conn.commit()
     print(users)
     return render_template('admin.html', users=users)
-  
+
+
+
 # ------------------------------------------------ End of Admin --------------------------------------------------------------
 
 
@@ -408,7 +413,6 @@ def admin_add_products_post():
 
 
 
-
 @app.route('/admin_update', methods=['POST'])
 def admin_update_product():
     created_by = request.form['vendor_username']
@@ -556,6 +560,9 @@ def delete_complaint():
 
 
 # ------------------------------------------------ Start of Chat - Vee
+@app.route('/chat')
+def showChat_page():
+    return render_template ('chat.html')
 
 
 
@@ -563,8 +570,7 @@ def delete_complaint():
 
 
 
-
-# ------------------------------------------------ End of Chat ---------------------------------------------------------------
+# ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 
 
 
