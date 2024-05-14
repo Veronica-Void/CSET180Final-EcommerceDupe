@@ -12,7 +12,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -311,6 +311,7 @@ def showCart():
             item_total = product[5] * product[4]
             cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'item_total': item_total})
             total += item_total
+
     return render_template('cart.html', cart_items=cart_items, total=total)
 
 
@@ -521,7 +522,7 @@ def create_complaint_post():
     
     conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
                      {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName}) ## This is the SQL query that inserts the complaint into the database
-    conn.execute(text('INSERT INTO COMPLAINTIMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
+    conn.execute(text('INSERT INTO COMPLAINT_IMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
     conn.commit()
     return redirect('/Customer_create_complaint')
     ## This app route lets the Customer create a complaint and add it to the database on the Customer_create_complaint page
@@ -564,7 +565,7 @@ def update_complaint():
 @app.route('/delete_complaint', methods=['POST'])
 def delete_complaint():
     complaint_id = request.form['complaint_id']
-    conn.execute(text('DELETE FROM COMPLAINTIMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
+    conn.execute(text('DELETE FROM COMPLAINT_IMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
     conn.execute(text('DELETE FROM COMPLAINT WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the complaint from the database based on the complaint id
     conn.commit()
     return redirect('/Admin_view_complaints')
@@ -639,15 +640,25 @@ def checkout_post():
 
 
 # ------------------------------------------------ Start of Chat - Vee
-@app.route('/chat')
+
+# displays the chat page
+@app.route('/chat', methods=['GET'])
 def showChat_page():
     return render_template ('chat.html')
 
 
+# chat functionality
+@app.route('/chat', methods=['POST'])
+def chat_function():
+    msg_input = request.form.get('TEXT_MESSAGE')
+    msg_images = request.form.get('MESSAGE_IMAGE_URL')
 
-
-
-
+    if msg_input != '':
+        conn.execute(text(f"INSERT INTO MESSAGE (TEXT_MESSAGE, MESSAGE_IMAGE_URL) VALUES (\'{msg_input}\', \'{msg_images}\') "))
+        conn.commit()
+        return redirect(url_for('showChat_page'))
+    else:
+        print('This is not working.')
 
 # ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 
