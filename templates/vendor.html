@@ -72,6 +72,33 @@
         }
     }
 
+    .vendor_bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.vendor_bar li {
+    float: left;
+}
+
+.vendor_bar li a {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border: 1px solid #ccc;
+    border-radius: 3px; 
+}
+
+.vendor_bar li a:hover {
+    background-color: #e9ecef;
+}
 
 </style>
 
@@ -132,7 +159,6 @@
                             {% endfor %}
                         </div>
                         {% endif %}
-    
                         <h3 class="product_name">{{ vendor_products[i][1] }}</h3>
                         <p class="product_desc">{{ vendor_products[i][2] }}</p>
                         <p class="price">${{ vendor_products[i][5] }}</p>
@@ -141,31 +167,10 @@
                 {% endfor %}
             {% endif %}
         </div>
-    </section> -->
-    <div class="content">
-        {% block body %}
-        {% endblock %}
-    </div>
+    </section>
+    {%endblock%}
+</body>
+</html>
+<!-- this page should display all of the products that a particular vendor has -->
 
-    
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo">
-                    <h3>TheShop</h3>
-                </div>
-                <div class="footer-social">
-                    <h4>Follow Us</h4>
-                    <ul>
-                        <li><a href="#">Facebook</a></li>
-                        <li><a href="#">Twitter</a></li>
-                        <li><a href="#">Instagram</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 TheShop. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+<!-- vendor should be able to use their edit/delete/add products here as well? -->
