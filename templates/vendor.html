@@ -100,6 +100,40 @@
     background-color: #e9ecef;
 }
 
+.table-head{
+    background-color: rgba(161, 161, 161, 0.877);
+    border: solid 1px black;
+    border-radius: 5px;
+    height: fit-content;
+}
+
+table, th, td{
+    border: 1.5px solid black;
+    border-collapse: collapse;
+    padding: 15px;
+}
+
+table {
+    border-radius: 10px;
+}
+ 
+tbody{
+    border: 1px solid;
+}
+
+
+.table-head:hover{
+    background-color:  rgba(161, 161, 161, 0.877);
+}
+
+tr:hover{
+    background-color: rgb(249, 231, 208);
+}
+
+tr, th, td{
+    padding: 5px;
+}
+
 </style>
 
 <!-- this page should display all of the products that a particular vendor has -->
@@ -139,33 +173,40 @@
 
     <ul class="vendor_bar">
         <li><a href="/add_products">Product Actions</a></li>
-        <li><a href="/vendorproducts">View Your Products</a></li>
+        <li><a href="/vendor_products">View Your Products</a></li>
         <li><a href="/view_reviews">View Reviews</a></li>
         <li><a href="Vendor_view_orders.html">View Orders</a></li>
     </ul>
 
     <h3>Below you will see the products you have:</h3>
-    <!-- <section class="products_section">
-        <div class="products_container">
 
-            {% if vendor_products %}
-                {% for i in range(vendor_products|length) %}
-                    <div class="actual_product" name="item">
-                        {% if imgs %}
-                        <img src="{{ imgs[i][1] }}" alt="product" class="product_img">
-                        <div class="mini_flexbox">
-                            {% for img in imgs %}
-                                <img src="{{ img[1] }}" alt="product" class="miniIMG">
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        <h3 class="product_name">{{ vendor_products[i][1] }}</h3>
-                        <p class="product_desc">{{ vendor_products[i][2] }}</p>
-                        <p class="price">${{ vendor_products[i][5] }}</p>
-                        <a href="#" class="add_to" onclick="addToCart(2)">Add to cart</a>
-                    </div>
-                {% endfor %}
-            {% endif %}
+        <div class="products_container">
+            <table>
+                <thead>
+                    <tr class="table-head">
+                        <th>Product ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Warranty Period</th>
+                        <th>Amount In Stock</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if vendor_products %}
+                        {% for y in range(vendor_products|length) %}
+                            <tr class="">
+                                <td>{{ vendor_products[y][0] }}</td>
+                                <td>{{ vendor_products[y][1] }}</td>
+                                <td>{{ vendor_products[y][2] }}</td>
+                                <td>{{ vendor_products[y][3] }}</td>
+                                <td>{{ vendor_products[y][4] }}</td>
+                                <td>{{ vendor_products[y][5] }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
     </section>
     {%endblock%}
