@@ -1,4 +1,5 @@
 
+import traceback
 import MySQLdb.cursors # Imports 'cursors' allows you to interect with MySQL database. Also used to execute SQL queries and fetch data from database.
 import re # Provide support for regular expressions, searches and manipulates strings, it helps with a lot of tasks like validation.
 
@@ -12,7 +13,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 
-c_str = "mysql://root:cyber241@localhost/ecomm"
+# c_str = "mysql://root:cyber241@localhost/ecomm"
+c_str = "mysql://root:Applepine13.!@localhost/ECOM"
 engine = create_engine(c_str, echo=True)
 
 
@@ -172,18 +174,11 @@ def all_accounts():
 
 
 
-# @app.route('/all_accounts', methods=['POST'])
-# def search_account():
-#     acc_type = request.form.get('acc_type')
-#     if acc_type == 'all':
-#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
-#     else:
-#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-#     conn.commit()
-#     print(users)
-#     return render_template('all_accounts.html', users=users)
 
-# admin views all accounts
+
+@app.route('/admin', methods=['GET'])
+def showAdmin():
+    return render_template('admin.html')
 
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
@@ -257,66 +252,129 @@ def showProduct_page():
  
 
 
+# ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
 
 
-# ------------------------------------------------ Start of checkout - Jaiden
 
 
-# Add to Cart - Jaiden
-@app.route('/add_to_cart/<int:product_id>', methods=['GET'])
-def add_to_cart(product_id):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+def add_to_cart(product_id): 
     try:
+        # Ensure product_id is provided
+        if not product_id:
+            return "No product ID provided", 400
+
+        # Get or create cart_id
         cart_id = session.get('cart_id')
         if not cart_id:
             cart_id = generate_unique_cart_id()
             session['cart_id'] = cart_id
-        
+
+        # Check if cart exists, if not create one
+        result = conn.execute(text("SELECT * FROM CART WHERE CART_ID = :cart_id"), {'cart_id': cart_id}).fetchone()
+        if result is None:
+            # Check if 'username' is in the session
+            if 'username' not in session:
+                return "User not logged in", 401
+
+            conn.execute(text("INSERT INTO CART (CART_ID, CREATED_BY) VALUES (:cart_id, :username)"), {'cart_id': cart_id, 'username': session['username']})
+
+        # Add product to cart
         conn.execute(
-            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"), 
+            text("INSERT INTO CART_HAS_PRODUCT (PID, CART_ID) VALUES (:pid, :cart_id)"),
             {'pid': product_id, 'cart_id': cart_id}
         )
-        flash('Item added to cart!')
-        return redirect(url_for('showProduct_page'))
-    
-    except ValueError:
-        return "Invalid product ID", 400
-    
+
+        # Commit the transaction
+        conn.commit()
+
+        return "Product added to cart", 200
     except Exception as e:
-        print(f"Failed to add item to cart: {str(e)}")
-        return "Failed to add item to cart", 500
-
-
-
-
-
-# Remove from Cart - Jaiden
-@app.route('/remove_from_cart/<int:product_id>')
-def remove_from_cart(product_id):
-    if 'cart' in session and product_id in session['cart']:
-        session['cart'].remove(product_id)
-        flash('Item removed from cart!')
-    return redirect(url_for('showCart'))
-
-
-# A route to display the actual cart - Jaiden
-@app.route('/cart')
-def showCart():
-    cart_items = []
-    total = 0
-    cart_id = session.get('cart_id')
-    if cart_id:
-        cart_products = conn.execute(text("SELECT p.* FROM PRODUCT p INNER JOIN CART_HAS_PRODUCT cp ON p.PID = cp.PID WHERE cp.CART_ID = :cart_id"), {'cart_id': cart_id}).fetchall()
-        for product in cart_products:
-            item_total = product[5] * product[4]
-            cart_items.append({'pid': product[0], 'title': product[1], 'description': product[2], 'warranty_period': product[3], 'number_of_items': product[4], 'price': product[5], 'category': product[6], 'item_total': item_total})
-            total += item_total
-    return render_template('cart.html', cart_items=cart_items, total=total)
-
-
-
-
-
+        print(f"Error adding product to cart: {type(e).__name__}, {e}")
+        print(traceback.format_exc())  # Print the traceback
+        return "Failed to add product to cart", 500
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
@@ -406,23 +464,6 @@ def admin_add_products_post():
         conn.commit()
         flash('Item added')
     return redirect('/admin_add_products')
-
-
-
-
-
-
-# @app.route('/all_accounts', methods=['POST'])
-# def search_account():
-#     acc_type = request.form.get('acc_type')
-#     if acc_type == 'all':
-#         users = conn.execute(text('SELECT * FROM USER')).fetchall()
-#     else:
-#         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
-#     conn.commit()
-#     print(users)
-#     return render_template('admin.html', users=users)
-  
 
 
 
@@ -576,21 +617,129 @@ def delete_complaint():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/Customer_orders', methods=['GET'])
 def order_get():
     username = session.get('USER_NAME')
     orders = conn.execute(text('SELECT * FROM ORDERS WHERE placedByUserName = :username'), {'username': username}).fetchall()
     return render_template('Customer_orders.html' , orders=orders, username=username) 
 
+@app.route('/Checkout', methods=['GET'])
+def checkout_get():
+    username = session.get('USER_NAME')
+    cart_id = session.get('cart_id')
 
-@app.route('/Customer_orders', methods=['POST'])
+    # Get the items in the cart
+    items = conn.execute(text('''
+        SELECT PRODUCT.* 
+        FROM CART_HAS_PRODUCT 
+        JOIN PRODUCT ON CART_HAS_PRODUCT.PID = PRODUCT.PID
+        WHERE CART_ID = :cart_id
+    '''), {'cart_id': cart_id}).fetchall()
+
+    # Calculate the total amount in the SQL query
+    total_amount = conn.execute(text('''
+        SELECT SUM(PRODUCT.PRICE) 
+        FROM CART_HAS_PRODUCT 
+        JOIN PRODUCT ON CART_HAS_PRODUCT.PID = PRODUCT.PID
+        WHERE CART_ID = :cart_id
+    '''), {'cart_id': cart_id}).scalar()
+
+    return render_template('Checkout.html', items=items, total_amount=total_amount, username=username)
+
+@app.route('/Checkout', methods=['POST'])
 def place_order():
     username = session.get('USER_NAME')
-    status = status = "Pending"
-    conn.execute(text('INSERT INTO ORDERS (status, placedByUserName) VALUES (:status, :username)'), {'status': status, 'username': username})
-    
-    return render_template('Customer_orders.html' , username=username, status=status)
+    status = "Pending"
+    cart_id = session.get('cart_id')
 
+    # Place the order
+    conn.execute(text('INSERT INTO ORDERS (status, placedByUserName) VALUES (:status, :username)'), {'status': status, 'username': username})
+
+    # Clear the cart
+    session.pop('cart_id', None)
+
+    return render_template('Customer_orders.html' , username=username, status=status)
 
 @app.route('/Vendor_view_orders', methods=['GET'])
 def view_orders():
@@ -625,18 +774,6 @@ def delete_order():
     return redirect('/Vendor_view_orders')
 ## End of Orders section Kishaun-------------------------------------------------------------------------------------> Kishaun
 
-@app.route('/Checkout', methods=['GET'])
-def checkout_get():
-    return render_template('Checkout.html')
-
-@app.route('/Checkout', methods=['POST'])
-def checkout_post():
-    username = session.get('USER_NAME')
-    address = request.form['address']
-    payment_method = request.form['payment_method']
-    conn.execute(text('INSERT INTO ORDERS (USER_NAME, ADDRESS, PAYMENT_METHOD) VALUES (:username, :address, :payment_method)'), {'username': username, 'address': address, 'payment_method': payment_method})
-    conn.commit()
-    return redirect('/Customer_orders')
 
 
 # ------------------------------------------------ Start of Chat - Vee
