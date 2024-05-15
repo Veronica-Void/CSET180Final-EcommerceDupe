@@ -1,4 +1,4 @@
-<style>
+<!-- <style>
   body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
@@ -74,31 +74,54 @@
     font-size: 14px;
     margin-top: 5px;
   }
+</style> -->
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+  }
+
+  form {
+      background-color: #ffffff;
+      border-radius: 5px;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+  }
+
+  label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+  }
+
+  input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+  }
+
+  input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+  }
+
+  input[type="submit"]:hover {
+      background-color: #45a049;
+  }
 </style>
 
-<!DOCTYPE html>
-<html>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../static/style.css">
-  <title>Title</title>
-</head>
-<body>
-<nav>
-  <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/admin_add_products">Admin</a></li>
-    <li><a href="/add_products">Vendor</a></li>
-    <li><a href="/all_accounts">Accounts</a></li>
-    <li><a href="/review">create review</a></li>
-    <li><a href="/view_reviews">View Reviews</a></li>
-    <li><a href="/register">Register</a></li>
-    <li><a href="/login">Login</a></li>
-    
-  </ul>
-  <button>
-    <a href="/login" class="btn">Logout</a>
-  </button> 
-</nav>
+{% extends "admin.html" %}
+
+{% block body %}
 <h2>Admin Add Product</h2>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -178,10 +201,55 @@
 
 
 
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
 
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+  }
 
-</body>
-</html>
+  form {
+      background-color: #ffffff;
+      border-radius: 5px;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+  }
+
+  label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+  }
+
+  input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+  }
+
+  input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+  }
+
+  input[type="submit"]:hover {
+      background-color: #45a049;
+  }
+</style>
+
+{% endblock %}
+
+

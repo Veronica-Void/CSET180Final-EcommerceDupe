@@ -1,0 +1,139 @@
+<style>
+
+    .products_section{
+        display: flex;
+        justify-content: space-between;
+        list-style-type: none;
+        text-align: center;
+        height: 200vh;
+        width: 100%;
+        padding-top: 1.5vh;
+        padding-bottom: 1.5vh;
+    }
+
+    .products_container{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 5px;
+        flex-wrap: wrap;
+        height: 10vh;
+        
+    }
+
+    @media (max-width: 400px) {
+        .products_container{
+            min-width: 99px;
+            flex-direction: column;
+        }
+        
+    }
+
+    .actual_product{
+        margin: 1.5%;
+        padding: 15px;
+        text-align: center;
+        width: 25vw;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .product_img{
+        width: 150px;
+        height: 175px;
+        border-radius: 20px;
+
+    }
+    .mini_flexbox{
+        display: flex;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        width: 250px;
+    }
+    .mini_flexbox::-webkit-scrollbar{
+        display: none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .miniIMG{
+        width: 25%;
+        height: 50px;
+        margin-right: 20px;
+        border: none;
+    }
+
+    @media screen {
+        .products_section, .products_container {
+            width: 100%;
+        }
+    }
+
+
+</style>
+
+<!-- this page should display all of the products that a particular vendor has -->
+
+<!-- vendor should be able to use their edit/delete/add products here as well? -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/base.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickShop - Home Page</title>
+</head>
+<body>
+
+    <header>
+        <div class="navBar">
+            <div class="innerNavBar">
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/Customer">Home</a></li>
+                    <li><a href="/view_products">Shop</a></li>
+                    <li><a href="/view_reviews">View Reviews</a></li>
+                    <li><a href="/review">Create review</a></li>
+                    <li><a href="/Customer_create_complaint">Create a complaint</a></li>
+                    <li><a href="/Customer_orders">View Orders</a></li>
+                </ul>
+                <button class="barItem input" style="margin-left:10px;">
+                    <a href="/logout" class="btn">Logout</a>
+                </button>
+            </div> 
+        </div>
+    </header>
+    <h2>Welcome Customer, {{ session['NAME'] }}!</h2>
+
+    <div class="content">
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo">
+                    <h3>TheShop</h3>
+                </div>
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TheShop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>

@@ -136,28 +136,50 @@ tr, th, td{
 
 </style>
 
+<!-- this page should display all of the products that a particular vendor has -->
+
+<!-- vendor should be able to use their edit/delete/add products here as well? -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/base.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop</title>
+    <title>QuickShop - Home Page</title>
 </head>
 <body>
-    {% extends "base.html" %}
 
-    {% block body %}
+    <header>
+        <div class="navBar">
+            <div class="innerNavBar">
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/vendor">Home Page</a></li>
+                    <li><a href="/my_account">My Account</a></li>
+                    <li><a href="/view_products">Shop</a></li> <!--this page will display all of the products-->
+                    <li><a href="/add_products">Add Products</a></li>
+                    <li><a href="/view_reviews">View reviews</a></li>
+                    <li><a href="/Vendor_view_orders">Orders</a></li>
+                </ul>
+                <button class="barItem input" style="margin-left:10px;">
+                    <a href="/logout" class="btn">Logout</a>
+                </button>
+            </div> 
+        </div>
+    </header>
     <h2>Welcome to the vendor page, {{ session['NAME'] }}!</h2>
 
     <ul class="vendor_bar">
         <li><a href="/add_products">Product Actions</a></li>
         <li><a href="/vendor_products">View Your Products</a></li>
         <li><a href="/view_reviews">View Reviews</a></li>
+        <li><a href="Vendor_view_orders.html">View Orders</a></li>
     </ul>
 
     <h3>Below you will see the products you have:</h3>
 
-    <section class="products_section">
         <div class="products_container">
             <table>
                 <thead>
@@ -187,9 +209,9 @@ tr, th, td{
             </table>
         </div>
     </section>
+    {%endblock%}
 </body>
 </html>
-{%endblock%}
 <!-- this page should display all of the products that a particular vendor has -->
 
 <!-- vendor should be able to use their edit/delete/add products here as well? -->
