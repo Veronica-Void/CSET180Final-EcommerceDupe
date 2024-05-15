@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Customer.html' %}
 {% block body %}
     <h1>Create Complaint</h1>
     <form action="/Customer_create_complaint" method="POST">
@@ -45,6 +45,7 @@
                 <td><img src="{{ complaint.imageURL }}" alt="Complaint image"></td>
             {% endfor %}
         </tbody>
+    </table>
         <!-- {% for complaint in complaints %}
         <div>
             <h2>{{ complaint.title }}</h2>

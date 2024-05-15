@@ -2,94 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/base.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Home page</title>
+    <title>QuickShop - Home Page</title>
 </head>
-
-
 <body>
-    {% extends 'base.html' %}
-    {% block body %}
+
+    <header>
+        <div class="navBar">
+            <div class="innerNavBar">
+
+                <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo" class="logo">
+
+                <ul class="bar">
+                    <li><a href="/admin">Home Page</a></li>
+                    <li><a href="/my_account">My Account</a></li>
+                    <li><a href="/view_products">Shop</a></li> <!--this page will display all of the products-->
+                    <li><a href="/Admin_view_complaints">Complaints</a></li>
+                    <li><a href="/admin_add_products">Add Products</a></li>
+                    <li><a href="/view_reviews">View reviews</a></li>
+                    <li><a href="/Vendor_view_orders">Orders</a></li>
+                    <li><a href="/all_accounts">All Accounts</a></li>
+
+                </ul>
+                <button class="barItem input" style="margin-left:10px;">
+                    <a href="/logout" class="btn">Logout</a>
+                </button>
+            </div> 
+        </div>
+    </header>
+    <h1>Hello ADMIN!</h1>
     
-<h1>Hello ADMIN these are all the accounts in the system!</h1>
-<h1>Accounts</h1>
-
-
-    <form method="POST" action="/all_accounts">
-        <label for="acc_type">Account Type:</label>
-        <select id="acc_type" name="acc_type">
-            <option value="all">All</option>
-            <option value="Vendor">Vendor</option>
-            <option value="Customer">Customer</option>
-        </select>
-        <input type="submit" value="Filter">
-    </form>
-
-    <table>
-        <tr>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Account Type</th>
-            <th>Username</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.EMAIL }}</td>
-            <td>{{ user.NAME }}</td>
-            <td>{{ user.ACCOUNT_TYPE }}</td>
-            <td>{{ user.USER_NAME }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-<style>
-    body {
-    font-family: Arial, sans-serif;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    text-align: left;
-    padding: 16px;
-}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-input[type=submit] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-input[type=submit]:hover {
-    background-color: #45a049;
-}
-
-form {
-    margin-bottom: 20px;
-}
-</style>
-    {%endblock%}
-</body>
-</html>
-
-
-
+    
+    <div class="content">
+        {% block body %}
+        {% endblock %}
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="../static/speedcart_Logo.jpg" alt="Ecomm Logo">
+                    <h3>TheShop</h3>
+                </div>
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TheShop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
