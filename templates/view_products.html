@@ -132,12 +132,13 @@
                         <div class="mini_flexbox">
                             {% if specific_imgs %}
                                 {% for x in range(specific_imgs|length) %}
-                                    <img src="{{ specific_imgs[x][1] }}" alt="product" class="miniIMG">
+                                    <img src="{{ specific_imgs[x][1][1] }}" alt="product" class="miniIMG">
                                 {% endfor %}
                             {% endif %}
                         </div>
                         <h3 class="product_name">{{ items[i][1] }}</h3>
                         <p class="product_desc">{{ items[i][2] }}</p>
+                        <p class="product_desc">{{ items[i][7] }}</p>
                         <p class="price">${{ items[i][5] }}</p>
                         <button class="add_to" onclick="addToCart(this)" data-product-id="{{ items[i][0] }}">Add to cart</button>
                     </div>

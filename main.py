@@ -204,13 +204,13 @@ def search_account():
 
 # ------------------------------------------------ Start of Vendor accounts - Vee
 
-# Shows the vendor page
+# Shows the vendor page and specific products
 @app.route('/vendor')
 def showVendor():
     return render_template('/vendor.html')
 
 # shows specific products on the Vendor page
-@app.route('/vendorproducts')
+@app.route('/vendor_products')
 def showVendor_Products():
     # getting username from session
     username = str(session.get('USER_NAME'))
