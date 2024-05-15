@@ -13,8 +13,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG) #Using to check for errors
 
 
-# c_str = "mysql://root:cyber241@localhost/ecomm"
-c_str = "mysql://root:Applepine13.!@localhost/ECOM"
+
+c_str = "mysql://root:MySQL8090@localhost/ecomm"
 engine = create_engine(c_str, echo=True)
 
 
@@ -176,9 +176,13 @@ def all_accounts():
 
 
 
+
 @app.route('/admin', methods=['GET'])
 def showAdmin():
     return render_template('admin.html')
+
+
+# admin searches all accounts
 
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
@@ -238,14 +242,16 @@ def showVendor_Products():
 def showProduct_page():
     # joining together the product table and product image table
     items = conn.execute(text('Select * from product p join product_imgs p_img where p.PID = p_img.PID')).all()
-
-    # grabbing images from the db
+    # grabbing images from the form and db
+    username = str(session.get('USER_NAME'))
     imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS')).all()
+    specific_imgs = conn.execute(text('SELECT * FROM PRODUCT_IMGS pic INNER JOIN PRODUCT prod ON (pic.PID=prod.PID)')).all()
+
 
     # just checking to see if it's working in the terminal
     print(len(items))
 
-    return render_template('/view_products.html', items=items, imgs=imgs)
+    return render_template('/view_products.html', items=items, imgs=imgs, specific_imgs=specific_imgs)
 
 
 # ------------------------------------------------ End of Product page ------------------------------------------------------------
@@ -253,6 +259,7 @@ def showProduct_page():
 
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
+
 
 
 
@@ -404,7 +411,7 @@ def add_products_post():
 def add_more_images():
     PID = request.form['PID']
     imagesURL = request.form['imagesURL']
-    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID,IMAGE_URL ) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
+    conn.execute(text('INSERT INTO PRODUCT_IMGS (PID, IMAGE_URL) VALUES (:PID, :imagesURL)'), {'PID': PID, 'imagesURL': imagesURL}) 
     conn.commit()  
     flash('Image added')
     return redirect(url_for('add_products'))
@@ -464,8 +471,6 @@ def admin_add_products_post():
         conn.commit()
         flash('Item added')
     return redirect('/admin_add_products')
-
-
 
 
 @app.route('/admin_update', methods=['POST'])
@@ -562,7 +567,7 @@ def create_complaint_post():
     
     conn.execute(text('INSERT INTO COMPLAINT (date, title, description, demand, status, reviewUserName) VALUES (:date, :title, :desc, :demand, :status, :reviewUserName)'), 
                      {'date': now, 'title': title, 'desc': desc, 'demand': demand, 'status': status, 'reviewUserName': reviewUserName}) ## This is the SQL query that inserts the complaint into the database
-    conn.execute(text('INSERT INTO COMPLAINTIMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
+    conn.execute(text('INSERT INTO COMPLAINT_IMAGES (CID, imageURL) VALUES (LAST_INSERT_ID(), :imagesURL)'), {'imagesURL': request.form['imagesURL']}) ## This is the SQL query that inserts the image into the database
     conn.commit()
     return redirect('/Customer_create_complaint')
     ## This app route lets the Customer create a complaint and add it to the database on the Customer_create_complaint page
@@ -605,7 +610,7 @@ def update_complaint():
 @app.route('/delete_complaint', methods=['POST'])
 def delete_complaint():
     complaint_id = request.form['complaint_id']
-    conn.execute(text('DELETE FROM COMPLAINTIMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
+    conn.execute(text('DELETE FROM COMPLAINT_IMAGES WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the image of the complaint from the database based on the complaint id
     conn.execute(text('DELETE FROM COMPLAINT WHERE CID = :complaint_id'), {'complaint_id': complaint_id}) ## This is the SQL query that deletes the complaint from the database based on the complaint id
     conn.commit()
     return redirect('/Admin_view_complaints')
@@ -777,15 +782,25 @@ def delete_order():
 
 
 # ------------------------------------------------ Start of Chat - Vee
-@app.route('/chat')
+
+# displays the chat page
+@app.route('/chat', methods=['GET'])
 def showChat_page():
     return render_template ('chat.html')
 
 
+# chat functionality
+@app.route('/chat', methods=['POST'])
+def chat_function():
+    msg_input = request.form.get('TEXT_MESSAGE')
+    msg_images = request.form.get('MESSAGE_IMAGE_URL')
 
-
-
-
+    if msg_input != '':
+        conn.execute(text(f"INSERT INTO MESSAGE (TEXT_MESSAGE, MESSAGE_IMAGE_URL) VALUES (\'{msg_input}\', \'{msg_images}\') "))
+        conn.commit()
+        return redirect(url_for('showChat_page'))
+    else:
+        print('This is not working.')
 
 # ------------------------------------------------ End of Chat  ---------------------------------------------------------------
 
