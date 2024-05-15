@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+<!-- {% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,5 +29,21 @@
         </div>
     </section>
     {% endblock %}
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <ul>
+        {% for item in cart_items %}
+            <li>{{ item.title }} - {{ item.color }} - {{ item.size }} - ${{ item.price }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Total: ${{ total_price }}</h2>
 </body>
 </html>

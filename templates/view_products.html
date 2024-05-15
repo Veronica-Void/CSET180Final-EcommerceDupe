@@ -1,4 +1,41 @@
 <style>
+
+    /* ...existing CSS... */
+</style>
+
+<script>
+    function addToCart(button) {
+        console.log('addToCart function called');  // Debugging line
+
+        var productId = button.getAttribute('data-product-id');
+        console.log('Adding product to cart:', productId);
+
+        fetch(`/add_to_cart/${productId}`, {  // Include the product ID in the URL
+            method: 'POST',  // Change the method to POST
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.log('Status code:', response.status);
+                return response.text().then(text => {
+                    console.log('Response body:', text);
+                    throw new Error('Network response was not ok');
+                });
+            }
+            return response;
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Item added to cart');
+            } else {
+                alert('Failed to add item');
+            }
+        })
+        .catch(error => {
+            console.error('Error adding item to cart:', error);
+        });
+    }
+</script>
+
     .products_section{
         display: flex;
         justify-content: space-between;
@@ -73,32 +110,13 @@
     }
 </style>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop</title>
-    <script>
-        function addToCart(button) {
-            var productId = button.getAttribute('data-product-id');
-            console.log('Adding product to cart:', productId);
-            fetch(`/add_to_cart/${productId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Item added to cart');
-                } else {
-                    alert('Failed to add item');
-                }
-            })
-            .catch(error => console.error('Error adding item to cart:', error));
-        }
-    </script>
 </head>
 {% extends 'base.html' %}
 <body>
@@ -125,14 +143,10 @@
                     </div>
                 {% endfor %}
             {% endif %}
-
-        
+            <h2>Checkout</h2>
+            <a href="/Checkout">Checkout</a>
         </div>
-
     </section>
     {%endblock%}
 </body>
 </html>
-
-
-
