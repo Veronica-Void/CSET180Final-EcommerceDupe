@@ -118,8 +118,8 @@ def loginUser():
                      redirect(url_for('showAdmin'))
                 elif user_data[4] == 'Vendor':
                     return redirect(url_for('showVendor'))
-                else:
-                    return redirect(url_for('home'))
+                elif user_data[4] == 'Customer':
+                    return redirect('/Customer')
             else:
                 msg = 'Wrong username or password'
         else:
@@ -180,6 +180,12 @@ def all_accounts():
 def showAdmin():
     return render_template('admin.html')
 
+
+@app.route('/all_accounts', methods=['GET'])
+def all_account():
+    return render_template('all_accounts.html')
+
+
 @app.route('/all_accounts', methods=['POST'])
 def search_account():
     acc_type = request.form.get('acc_type')
@@ -189,7 +195,7 @@ def search_account():
         users = conn.execute(text('SELECT * FROM USER WHERE ACCOUNT_TYPE = :acc_type'), {'acc_type': acc_type}).fetchall()
     conn.commit()
     print(users)
-    return render_template('admin.html', users=users)
+    return render_template('all_accounts.html', users=users)
 
 
 
@@ -254,6 +260,9 @@ def showProduct_page():
 
 # ------------------------------------------------ End of checkout ---------------------------------------------------------------
 
+@app.route('/Customer', methods=['GET'])
+def showCustomer():
+    return render_template('Customer.html')
 
 
 
